@@ -1,12 +1,17 @@
 .container {
   min-height: 100vh;
   background-color: var(--color-neutral-50);
+  overflow-x: hidden;
 }
 
 .tabsWrapper {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--color-white);
-  border-bottom: 1px solid var(--color-neutral-100);
+  padding: 0 var(--spacing-lg);
+  background-color: var(--color-primary-900);
+  border-bottom: none;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 57px;
+  z-index: 90;
 }
 
 .list {

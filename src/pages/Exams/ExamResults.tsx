@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ArrowUp } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
 import { Header, Tabs, Input, Card } from '../../components/ui';
 import styles from './Exams.module.css';
 
@@ -59,20 +59,13 @@ export function ExamResults() {
       <Header
         title="Exam Result"
         showBackButton
-        rightActions={['search', 'add', 'filter']}
+        variant="primary"
       />
 
-      <div className={styles.searchWrapper}>
-        <Input
-          placeholder="Search by exam name"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          leftIcon={<Search size={20} />}
-        />
-      </div>
+      
 
       <div className={styles.tabsWrapper}>
-        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="dark" />
       </div>
 
       <div className={styles.list}>

@@ -10,8 +10,12 @@
 
 .tabsWrapper {
   padding: 0 var(--spacing-lg);
-  background-color: var(--color-white);
-  border-bottom: 1px solid var(--color-neutral-100);
+  background-color: var(--color-primary-900);
+  border-bottom: none;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 57px;
+  z-index: 90;
 }
 
 .list {

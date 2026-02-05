@@ -9,7 +9,7 @@ interface TabsProps {
   tabs: Tab[];
   activeTab: string;
   onChange: (tabId: string) => void;
-  variant?: 'underline' | 'pill';
+  variant?: 'underline' | 'pill' | 'dark';
 }
 
 export function Tabs({ tabs, activeTab, onChange, variant = 'underline' }: TabsProps) {

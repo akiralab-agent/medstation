@@ -37,6 +37,26 @@ const mockAppointments: Appointment[] = [
   },
   {
     id: '3',
+    date: 'Sep 15, 2026',
+    time: '02:00 PM',
+    doctor: 'Dr. Emily Rodriguez',
+    specialty: 'Dermatology',
+    clinic: 'Skin Care Center',
+    type: 'in-person',
+    status: 'upcoming',
+  },
+  {
+    id: '4',
+    date: 'Sep 20, 2026',
+    time: '09:00 AM',
+    doctor: 'Dr. James Wilson',
+    specialty: 'Orthopedics',
+    clinic: 'City Hospital',
+    type: 'in-person',
+    status: 'upcoming',
+  },
+  {
+    id: '5',
     date: 'Aug 20, 2026',
     time: '02:00 PM',
     doctor: 'Dr. Emily Rodriguez',
@@ -44,6 +64,36 @@ const mockAppointments: Appointment[] = [
     clinic: 'Skin Care Center',
     type: 'in-person',
     status: 'completed',
+  },
+  {
+    id: '6',
+    date: 'Aug 15, 2026',
+    time: '11:00 AM',
+    doctor: 'Dr. Maria Santos',
+    specialty: 'Pediatrics',
+    clinic: 'Children Clinic',
+    type: 'telemedicine',
+    status: 'completed',
+  },
+  {
+    id: '7',
+    date: 'Aug 10, 2026',
+    time: '03:00 PM',
+    doctor: 'Dr. Robert Brown',
+    specialty: 'Neurology',
+    clinic: 'Neuro Center',
+    type: 'in-person',
+    status: 'completed',
+  },
+  {
+    id: '8',
+    date: 'Aug 05, 2026',
+    time: '10:30 AM',
+    doctor: 'Dr. Lisa Anderson',
+    specialty: 'Gynecology',
+    clinic: 'Women Health Center',
+    type: 'in-person',
+    status: 'canceled',
   },
 ];
 
@@ -68,10 +118,10 @@ export function MyAppointments() {
 
   return (
     <div className={styles.container}>
-      <Header title="My Appointments" showBackButton />
+      <Header title="My Appointments" showBackButton variant="primary" />
 
       <div className={styles.tabsWrapper}>
-        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="pill" />
+        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="dark" />
       </div>
 
       <div className={styles.list}>

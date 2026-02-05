@@ -5,7 +5,7 @@ import styles from '../Profile/Profile.module.css';
 export function Health() {
   return (
     <div className={styles.container}>
-      <Header title="Health Authorization" showBackButton />
+      <Header title="Health Authorization" showBackButton variant="primary" />
 
       <div className={styles.placeholderPage}>
         <div className={styles.placeholderIcon}>

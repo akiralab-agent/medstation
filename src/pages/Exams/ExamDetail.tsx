@@ -48,7 +48,7 @@ License #: FL12345
 
   return (
     <div className={styles.container}>
-      <Header title={exam.name} showBackButton />
+      <Header title={exam.name} showBackButton variant="primary" />
 
       <div className={styles.examHeader}>
         <h2 className={styles.examTitle}>{exam.name}</h2>
@@ -57,7 +57,7 @@ License #: FL12345
       </div>
 
       <div className={styles.tabsWrapper}>
-        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="dark" />
       </div>
 
       <div className={styles.tabContent}>
