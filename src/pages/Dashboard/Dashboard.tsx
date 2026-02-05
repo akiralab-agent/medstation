@@ -8,7 +8,6 @@ import {
   Clock,
   ChevronRight,
   User,
-  Heart,
   Shield
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -57,13 +56,6 @@ const quickActions: QuickAction[] = [
     path: '/schedule/new',
     color: 'primary'
   },
-];
-
-const stats = [
-  { label: 'Appointments', value: '12', change: '+2', icon: Calendar, color: 'primary' },
-  { label: 'Health Score', value: '94', change: '+5', icon: Heart, color: 'primary' },
-  { label: 'Medications', value: '3', change: 'Active', icon: Activity, color: 'primary' },
-  { label: 'Exams', value: '8', change: '+1', icon: FileText, color: 'primary' },
 ];
 
 const upcomingAppointments = [
@@ -118,25 +110,6 @@ export function Dashboard() {
             </p>
           </div>
 
-        </div>
-
-        {/* Stats Grid */}
-        <div className={styles.statsGrid}>
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div key={stat.label} className={`${styles.statCard} ${styles[stat.color]}`}>
-                <div className={styles.statIcon}>
-                  <Icon size={24} />
-                </div>
-                <div className={styles.statInfo}>
-                  <p className={styles.statLabel}>{stat.label}</p>
-                  <p className={styles.statValue}>{stat.value}</p>
-                  <span className={styles.statChange}>{stat.change}</span>
-                </div>
-              </div>
-            );
-          })}
         </div>
 
         {/* Main Grid */}
