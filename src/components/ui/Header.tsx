@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Plus, SlidersHorizontal } from 'lucide-react';
 import styles from './Header.module.css';
 
-type HeaderAction = 'search' | 'add' | 'filter';
+type HeaderAction = 'search' | 'add' | 'filter' | 'book';
 
 interface HeaderProps {
   title: string;
@@ -18,6 +19,11 @@ const actionIcons = {
   search: Search,
   add: Plus,
   filter: SlidersHorizontal,
+  book: Plus,
+};
+
+const actionLabels: Record<string, string> = {
+  book: 'Book Appointment',
 };
 
 export function Header({
@@ -29,6 +35,15 @@ export function Header({
   children,
 }: HeaderProps) {
   const navigate = useNavigate();
+  const [animatingAction, setAnimatingAction] = useState<string | null>(null);
+
+  const handleActionClick = (action: HeaderAction) => {
+    setAnimatingAction(action);
+    setTimeout(() => {
+      setAnimatingAction(null);
+      onActionClick?.(action);
+    }, 300);
+  };
 
   return (
     <header className={`${styles.header} ${styles[variant]}`}>
@@ -45,13 +60,16 @@ export function Header({
       <div className={styles.right}>
         {rightActions.map((action) => {
           const Icon = actionIcons[action];
+          const label = actionLabels[action];
+          const isAnimating = animatingAction === action;
           return (
             <button
               key={action}
-              className={styles.actionButton}
-              onClick={() => onActionClick?.(action)}
+              className={`${styles.actionButton} ${label ? styles.actionButtonWithText : ''} ${isAnimating ? styles.pulseAnimation : ''}`}
+              onClick={() => handleActionClick(action)}
             >
               <Icon size={20} />
+              {label && <span className={styles.actionLabel}>{label}</span>}
             </button>
           );
         })}

@@ -22,7 +22,7 @@ export function ServiceType() {
 
   return (
     <div className={styles.container}>
-      <Header title="Type of Service" showBackButton />
+      <Header title="Type of Service" showBackButton variant="primary" />
 
       <div className={styles.serviceCards}>
         {serviceTypes.map((service) => {
@@ -34,7 +34,7 @@ export function ServiceType() {
               onClick={() => handleSelect(service.id)}
             >
               <div className={styles.serviceIcon}>
-                <Icon size={48} />
+                <Icon size={22} />
               </div>
               <span className={styles.serviceLabel}>{service.label}</span>
             </button>

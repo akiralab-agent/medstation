@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { HeartPulse, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import styles from './Footer.module.css';
 
 export function Footer() {
@@ -12,11 +12,11 @@ export function Footer() {
           {/* Brand */}
           <div className={styles.brand}>
             <Link to="/dashboard" className={styles.logo}>
-              <HeartPulse size={24} className={styles.logoIcon} />
-              <span className={styles.logoText}>
-                <span className={styles.logoMed}>med</span>
-                <span className={styles.logoStation}>station</span>
-              </span>
+              <img 
+                src="/Medstation-Logo_1200px_H.png" 
+                alt="MedStation" 
+                className={styles.logoImage}
+              />
             </Link>
             <p className={styles.description}>
               Your trusted healthcare companion. Managing appointments, 
@@ -38,32 +38,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Quick Links</h4>
-            <Link to="/dashboard" className={styles.link}>Dashboard</Link>
-            <Link to="/appointments" className={styles.link}>Appointments</Link>
-            <Link to="/health" className={styles.link}>Health Records</Link>
-            <Link to="/exams" className={styles.link}>Lab Results</Link>
-          </div>
 
-          {/* Support */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Support</h4>
-            <Link to="/help" className={styles.link}>Help Center</Link>
-            <Link to="/contact" className={styles.link}>Contact Us</Link>
-            <Link to="/faq" className={styles.link}>FAQ</Link>
-            <Link to="/feedback" className={styles.link}>Feedback</Link>
-          </div>
-
-          {/* Legal */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Legal</h4>
-            <Link to="/privacy" className={styles.link}>Privacy Policy</Link>
-            <Link to="/terms" className={styles.link}>Terms of Service</Link>
-            <Link to="/cookies" className={styles.link}>Cookie Policy</Link>
-            <Link to="/security" className={styles.link}>Security</Link>
-          </div>
         </div>
 
         {/* Bottom */}
@@ -71,11 +46,6 @@ export function Footer() {
           <p className={styles.copyright}>
             © {currentYear} MedStation. All rights reserved.
           </p>
-          <div className={styles.legal}>
-            <Link to="/privacy" className={styles.legalLink}>Privacy</Link>
-            <Link to="/terms" className={styles.legalLink}>Terms</Link>
-            <Link to="/cookies" className={styles.legalLink}>Cookies</Link>
-          </div>
         </div>
       </div>
     </footer>

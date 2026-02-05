@@ -51,9 +51,7 @@ License #: FL12345
       <Header title={exam.name} showBackButton variant="primary" />
 
       <div className={styles.examHeader}>
-        <h2 className={styles.examTitle}>{exam.name}</h2>
-        <p className={styles.examInfo}>{exam.doctor}</p>
-        <p className={styles.examInfo}>{exam.date}</p>
+        <p className={styles.examInfo}>{exam.doctor} • {exam.date}</p>
       </div>
 
       <div className={styles.tabsWrapper}>

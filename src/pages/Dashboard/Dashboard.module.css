@@ -3,6 +3,111 @@
   padding: var(--spacing-xl) 0 var(--spacing-3xl);
 }
 
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Apply animations */
+.header {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.statsGrid {
+  animation: fadeInUp 0.5s ease-out 0.1s both;
+}
+
+.statCard {
+  animation: scaleIn 0.4s ease-out both;
+}
+
+.statCard:nth-child(1) { animation-delay: 0.1s; }
+.statCard:nth-child(2) { animation-delay: 0.2s; }
+.statCard:nth-child(3) { animation-delay: 0.3s; }
+.statCard:nth-child(4) { animation-delay: 0.4s; }
+
+.mainGrid {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
+}
+
+.actionCard {
+  animation: slideInLeft 0.4s ease-out both;
+}
+
+.actionCard:nth-child(1) { animation-delay: 0.2s; }
+.actionCard:nth-child(2) { animation-delay: 0.3s; }
+.actionCard:nth-child(3) { animation-delay: 0.4s; }
+.actionCard:nth-child(4) { animation-delay: 0.5s; }
+
+.appointmentsList {
+  animation: fadeIn 0.5s ease-out 0.3s both;
+}
+
+.appointmentItem {
+  animation: slideInLeft 0.4s ease-out both;
+}
+
+.appointmentItem:nth-child(1) { animation-delay: 0.3s; }
+.appointmentItem:nth-child(2) { animation-delay: 0.4s; }
+
+.secondaryGrid {
+  animation: fadeInUp 0.5s ease-out 0.3s both;
+}
+
+.healthCard {
+  animation: scaleIn 0.5s ease-out 0.4s both;
+}
+
+.activityList {
+  animation: fadeIn 0.5s ease-out 0.4s both;
+}
+
+.activityItem {
+  animation: slideInLeft 0.3s ease-out both;
+}
+
+.activityItem:nth-child(1) { animation-delay: 0.4s; }
+.activityItem:nth-child(2) { animation-delay: 0.5s; }
+.activityItem:nth-child(3) { animation-delay: 0.6s; }
+
 /* Header */
 .header {
   display: flex;

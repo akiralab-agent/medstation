@@ -54,6 +54,7 @@ export function ChooseSchedule() {
   const [selectedSlot, setSelectedSlot] = useState<{ doctorId: string; time: string } | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [doctors, setDoctors] = useState<Doctor[]>(mockDoctors);
+  const [dateAnimation, setDateAnimation] = useState<'slide-left' | 'slide-right' | null>(null);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
@@ -64,9 +65,13 @@ export function ChooseSchedule() {
   };
 
   const changeDate = (days: number) => {
-    const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() + days);
-    setCurrentDate(newDate);
+    setDateAnimation(days > 0 ? 'slide-left' : 'slide-right');
+    setTimeout(() => {
+      const newDate = new Date(currentDate);
+      newDate.setDate(newDate.getDate() + days);
+      setCurrentDate(newDate);
+      setDateAnimation(null);
+    }, 200);
   };
 
   const toggleFavorite = (doctorId: string) => {
@@ -89,19 +94,21 @@ export function ChooseSchedule() {
 
   return (
     <div className={styles.container}>
-      <Header title="Choose Your Schedule" showBackButton />
+      <Header title="Choose Your Schedule" showBackButton variant="primary" />
 
       <div className={styles.dateNav}>
         <button className={styles.dateNavButton} onClick={() => changeDate(-1)}>
           <ChevronLeft size={24} />
         </button>
-        <span className={styles.dateText}>{formatDate(currentDate)}</span>
+        <span className={`${styles.dateText} ${dateAnimation ? styles[dateAnimation] : ''}`}>
+          {formatDate(currentDate)}
+        </span>
         <button className={styles.dateNavButton} onClick={() => changeDate(1)}>
           <ChevronRight size={24} />
         </button>
       </div>
 
-      <div className={styles.doctorList}>
+      <div className={`${styles.doctorList} ${dateAnimation ? styles.animateList : ''}`}>
         {doctors.map((doctor) => (
           <div key={doctor.id} className={styles.doctorCard}>
             <div className={styles.doctorHeader}>

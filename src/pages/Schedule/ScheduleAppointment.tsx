@@ -66,17 +66,19 @@ export function ScheduleAppointment() {
             </div>
           </div>
 
-          <div className={styles.field}>
-            <label className={styles.label}>Location</label>
-            <div className={styles.inputWrapper}>
-              <MapPin size={20} className={styles.inputIcon} />
-              <Input
-                placeholder="Near me"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
+          {activeTab !== 'telemedicine' && (
+            <div className={styles.field}>
+              <label className={styles.label}>Location</label>
+              <div className={styles.inputWrapper}>
+                <MapPin size={20} className={styles.inputIcon} />
+                <Input
+                  placeholder="Near me"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <Button
             variant="success"

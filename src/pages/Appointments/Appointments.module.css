@@ -4,6 +4,98 @@
   overflow-x: hidden;
 }
 
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Apply animations */
+.tabsWrapper {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.list {
+  animation: fadeInUp 0.5s ease-out 0.1s both;
+}
+
+.appointmentCard {
+  animation: slideInLeft 0.4s ease-out both;
+}
+
+.appointmentCard:nth-child(1) { animation-delay: 0.1s; }
+.appointmentCard:nth-child(2) { animation-delay: 0.2s; }
+.appointmentCard:nth-child(3) { animation-delay: 0.3s; }
+.appointmentCard:nth-child(4) { animation-delay: 0.4s; }
+.appointmentCard:nth-child(5) { animation-delay: 0.5s; }
+.appointmentCard:nth-child(6) { animation-delay: 0.6s; }
+.appointmentCard:nth-child(7) { animation-delay: 0.7s; }
+.appointmentCard:nth-child(8) { animation-delay: 0.8s; }
+
+.empty {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
+}
+
+/* Detail Page Animations */
+.detailContent {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.dateDisplay {
+  animation: scaleIn 0.4s ease-out 0.1s both;
+}
+
+.infoSection {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
+}
+
+.infoItem {
+  animation: slideInLeft 0.3s ease-out both;
+}
+
+.infoItem:nth-child(1) { animation-delay: 0.2s; }
+.infoItem:nth-child(2) { animation-delay: 0.3s; }
+.infoItem:nth-child(3) { animation-delay: 0.4s; }
+.infoItem:nth-child(4) { animation-delay: 0.5s; }
+.infoItem:nth-child(5) { animation-delay: 0.6s; }
+
 .tabsWrapper {
   padding: 0 var(--spacing-lg);
   background-color: var(--color-primary-900);
@@ -12,6 +104,13 @@
   position: sticky;
   top: 57px;
   z-index: 90;
+  display: flex;
+  justify-content: center;
+}
+
+.tabsWrapper > * {
+  width: 100%;
+  max-width: 960px;
 }
 
 .list {

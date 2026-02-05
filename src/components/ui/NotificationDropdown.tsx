@@ -24,6 +24,7 @@ interface Notification {
 interface NotificationDropdownProps {
   isOpen: boolean;
   onClose: () => void;
+  triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
 const mockNotifications: Notification[] = [
@@ -98,14 +99,18 @@ const colorMap = {
   info: 'blue',
 };
 
-export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
+export function NotificationDropdown({ isOpen, onClose, triggerRef }: NotificationDropdownProps) {
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close on click outside
+  // Close on click outside (ignore clicks on trigger)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (triggerRef?.current && triggerRef.current.contains(target)) {
+        return;
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         onClose();
       }
     };
@@ -117,7 +122,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, triggerRef]);
 
   const handleAction = (notificationId: string, action: string) => {
     console.log(`Action ${action} on notification ${notificationId}`);

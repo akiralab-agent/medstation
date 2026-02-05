@@ -8,19 +8,18 @@ interface PaymentOption {
   id: string;
   icon: typeof DollarSign;
   label: string;
-  lines?: string[];
 }
 
 const inPersonPayments: PaymentOption[] = [
   { id: 'zelle', icon: Landmark, label: 'Zelle®' },
-  { id: 'cash', icon: DollarSign, label: 'CASH' },
-  { id: 'card', icon: CreditCard, label: 'CREDIT OR DEBIT CARD', lines: ['CREDIT', 'OR DEBIT', 'CARD'] },
-  { id: 'carecredit', icon: CreditCard, label: 'CARE CREDIT', lines: ['CARE', 'CREDIT'] },
+  { id: 'cash', icon: DollarSign, label: 'Cash' },
+  { id: 'card', icon: CreditCard, label: 'Credit or Debit Card' },
+  { id: 'carecredit', icon: CreditCard, label: 'Care Credit' },
 ];
 
 const telemedicinePayments: PaymentOption[] = [
-  { id: 'card', icon: CreditCard, label: 'CREDIT OR DEBIT CARD', lines: ['CREDIT', 'OR DEBIT', 'CARD'] },
-  { id: 'carecredit', icon: CreditCard, label: 'CARE CREDIT', lines: ['CARE', 'CREDIT'] },
+  { id: 'card', icon: CreditCard, label: 'Credit or Debit Card' },
+  { id: 'carecredit', icon: CreditCard, label: 'Care Credit' },
 ];
 
 export function PaymentMethod() {
@@ -45,7 +44,7 @@ export function PaymentMethod() {
 
   return (
     <div className={styles.container}>
-      <Header title="Payment Method" showBackButton />
+      <Header title="Payment Method" showBackButton variant="primary" />
 
       <div className={styles.paymentGrid}>
         {payments.map((payment) => {
@@ -56,14 +55,8 @@ export function PaymentMethod() {
               className={styles.paymentCard}
               onClick={() => handleSelect(payment.id)}
             >
-              <Icon size={32} />
-              {payment.lines ? (
-                payment.lines.map((line, i) => (
-                  <span key={i} className={styles.paymentLabel}>{line}</span>
-                ))
-              ) : (
-                <span className={styles.paymentLabel}>{payment.label}</span>
-              )}
+              <Icon size={22} />
+              <span className={styles.paymentLabel}>{payment.label}</span>
             </button>
           );
         })}

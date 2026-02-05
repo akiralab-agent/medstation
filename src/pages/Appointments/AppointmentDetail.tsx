@@ -54,7 +54,7 @@ export function AppointmentDetail() {
 
   return (
     <div className={styles.container}>
-      <Header title="Appointment Details" showBackButton />
+      <Header title="Appointment Details" showBackButton variant="primary" />
 
       <div className={styles.detailContent}>
         <div className={styles.statusRow}>

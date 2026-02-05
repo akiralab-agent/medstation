@@ -13,7 +13,8 @@ export function PaymentForm() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
-  const serviceValue = 250.0;
+  // Mocked service value - in real app, this would come from the selected appointment
+const serviceValue = 150.0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +52,7 @@ export function PaymentForm() {
 
   return (
     <div className={styles.container}>
-      <Header title="Payment" showBackButton />
+      <Header title="Payment" showBackButton variant="primary" />
 
       <div className={styles.content}>
         <div className={styles.balanceCard}>

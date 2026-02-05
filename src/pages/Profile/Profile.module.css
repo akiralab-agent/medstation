@@ -4,6 +4,99 @@
   padding-bottom: 100px;
 }
 
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Apply animations */
+.userCard {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.avatar {
+  animation: scaleIn 0.4s ease-out 0.1s both;
+}
+
+.menuCard {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
+}
+
+/* Profile Header Animations */
+.profileHeader {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.avatarLarge {
+  animation: scaleIn 0.4s ease-out 0.1s both;
+}
+
+/* Form Content Animations */
+.formContent {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
+}
+
+.formGroup {
+  animation: slideInRight 0.4s ease-out both;
+}
+
+.formGroup:nth-child(1) { animation-delay: 0.2s; }
+.formGroup:nth-child(2) { animation-delay: 0.3s; }
+.formGroup:nth-child(3) { animation-delay: 0.4s; }
+.formGroup:nth-child(4) { animation-delay: 0.5s; }
+.formGroup:nth-child(5) { animation-delay: 0.6s; }
+
+/* Health & Placeholder Pages */
+.healthContent {
+  animation: fadeInUp 0.5s ease-out 0.1s both;
+}
+
+.placeholderPage {
+  animation: fadeIn 0.6s ease-out 0.2s both;
+}
+
+.placeholderIcon {
+  animation: scaleIn 0.5s ease-out 0.3s both;
+}
+
 /* User Card */
 .userCard {
   display: flex;
@@ -139,6 +232,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: calc(100vh - 200px);
   padding: var(--spacing-xxl);
   text-align: center;
   color: var(--color-neutral-500);

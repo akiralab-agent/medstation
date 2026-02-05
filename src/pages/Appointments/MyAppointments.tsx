@@ -118,7 +118,13 @@ export function MyAppointments() {
 
   return (
     <div className={styles.container}>
-      <Header title="My Appointments" showBackButton variant="primary" />
+      <Header
+        title="My Appointments"
+        showBackButton
+        variant="primary"
+        rightActions={['book']}
+        onActionClick={() => navigate('/schedule/new')}
+      />
 
       <div className={styles.tabsWrapper}>
         <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="dark" />

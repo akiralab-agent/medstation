@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { 
-  HeartPulse, 
   LayoutDashboard, 
   CalendarClock, 
   Heart, 
@@ -36,6 +35,7 @@ export function Navbar() {
   const { logout, user } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const notificationBtnRef = useRef<HTMLButtonElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const notificationCount = 3; // Mock data
@@ -71,11 +71,11 @@ export function Navbar() {
       <div className={styles.container}>
         {/* Logo */}
         <Link to="/dashboard" className={styles.logo}>
-          <HeartPulse size={28} className={styles.logoIcon} />
-          <span className={styles.logoText}>
-            <span className={styles.logoMed}>med</span>
-            <span className={styles.logoStation}>station</span>
-          </span>
+          <img 
+            src="/Medstation-Logo_1200px.png" 
+            alt="MedStation" 
+            className={styles.logoImage}
+          />
         </Link>
 
         {/* Navigation */}
@@ -101,8 +101,12 @@ export function Navbar() {
           {/* Notification Button with Dropdown */}
           <div className={styles.notificationWrapper}>
             <button 
+              ref={notificationBtnRef}
               className={styles.notificationBtn}
-              onClick={() => setNotificationOpen(!notificationOpen)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setNotificationOpen((prev) => !prev);
+              }}
               aria-label="Notifications"
               aria-expanded={notificationOpen}
             >
@@ -116,6 +120,7 @@ export function Navbar() {
             <NotificationDropdown 
               isOpen={notificationOpen}
               onClose={() => setNotificationOpen(false)}
+              triggerRef={notificationBtnRef}
             />
           </div>
 

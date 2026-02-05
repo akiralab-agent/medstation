@@ -1,7 +1,186 @@
 .container {
   min-height: 100vh;
   background-color: var(--color-neutral-50);
+  animation: slideInPage 0.4s ease-out;
 }
+
+@keyframes slideInPage {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.patientSelector {
+  animation: fadeInUp 0.4s ease-out 0.1s both;
+}
+
+.content {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
+}
+
+/* Tabs animation */
+.content > div:first-child {
+  animation: fadeInUp 0.4s ease-out 0.3s both;
+}
+
+/* Form fields staggered animation */
+.form {
+  animation: fadeInUp 0.5s ease-out 0.35s both;
+}
+
+.field:nth-child(1) {
+  animation: slideInLeft 0.4s ease-out 0.4s both;
+}
+
+.field:nth-child(2) {
+  animation: slideInLeft 0.4s ease-out 0.5s both;
+}
+
+.field:nth-child(3) {
+  animation: slideInLeft 0.4s ease-out 0.6s both;
+}
+
+/* Button animation */
+.form button[type="submit"],
+.form > button:last-child {
+  animation: fadeInUp 0.4s ease-out 0.7s both;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Tab switching animation */
+.field {
+  transition: all 0.3s ease;
+}
+
+/* Choose Schedule Page Animations */
+.dateNav {
+  animation: fadeInUp 0.4s ease-out 0.1s both;
+}
+
+.doctorList {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.doctorList.animateList {
+  animation: listRefresh 0.4s ease-out;
+}
+
+@keyframes listRefresh {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  30% {
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  51% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  70% {
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.doctorCard {
+  animation: slideInLeft 0.4s ease-out both;
+}
+
+.doctorCard:nth-child(1) { animation-delay: 0.25s; }
+.doctorCard:nth-child(2) { animation-delay: 0.35s; }
+.doctorCard:nth-child(3) { animation-delay: 0.45s; }
+.doctorCard:nth-child(4) { animation-delay: 0.55s; }
+.doctorCard:nth-child(5) { animation-delay: 0.65s; }
+
+.timeSlots button {
+  animation: scaleIn 0.3s ease-out both;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Service Type Page Animations */
+.serviceCards {
+  animation: fadeInUp 0.3s ease-out 0.1s both;
+}
+
+.serviceCard {
+  animation: slideInRight 0.25s ease-out both;
+}
+
+.serviceCard:nth-child(1) { animation-delay: 0.1s; }
+.serviceCard:nth-child(2) { animation-delay: 0.18s; }
+.serviceCard:nth-child(3) { animation-delay: 0.26s; }
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Payment Method Page Animations */
+.paymentGrid {
+  animation: fadeInUp 0.3s ease-out 0.1s both;
+}
+
+.paymentCard {
+  animation: slideInRight 0.25s ease-out both;
+}
+
+.paymentCard:nth-child(1) { animation-delay: 0.1s; }
+.paymentCard:nth-child(2) { animation-delay: 0.18s; }
+.paymentCard:nth-child(3) { animation-delay: 0.26s; }
+.paymentCard:nth-child(4) { animation-delay: 0.34s; }
 
 /* Patient Selector */
 .patientSelector {
@@ -142,7 +321,61 @@
 .dateText {
   font-size: var(--font-md);
   font-weight: 600;
-  color: var(--color-neutral-900);
+  color: var(--color-primary-700);
+  transition: all 0.2s ease;
+}
+
+/* Date change animations */
+.dateText.slide-left {
+  animation: slideOutLeft 0.2s ease forwards;
+}
+
+.dateText.slide-right {
+  animation: slideOutRight 0.2s ease forwards;
+}
+
+@keyframes slideOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .doctorList {
@@ -226,75 +459,106 @@
   flex-direction: column;
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .serviceCard {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-xl);
-  background-color: var(--color-primary-700);
+  justify-content: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-white);
+  border: 2px solid var(--color-neutral-200);
   border-radius: var(--radius-lg);
-  color: var(--color-white);
-  transition: all 0.2s ease;
+  color: var(--color-neutral-700);
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .serviceCard:hover {
-  background-color: var(--color-primary-800);
-  transform: translateY(-2px);
+  border-color: var(--color-primary-500);
+  color: var(--color-primary-700);
+  transform: translateX(4px);
 }
 
 .serviceCard:active {
-  transform: translateY(0);
+  transform: translateX(2px);
+  background-color: var(--color-primary-50);
 }
 
 .serviceIcon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--color-primary-100);
+  border-radius: var(--radius-md);
+  color: var(--color-primary-700);
 }
 
 .serviceLabel {
-  font-size: var(--font-md);
-  font-weight: 700;
+  font-size: var(--font-sm);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 /* Payment Methods */
 .paymentGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .paymentCard {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-lg);
-  background-color: var(--color-primary-700);
+  justify-content: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-white);
+  border: 2px solid var(--color-neutral-200);
   border-radius: var(--radius-lg);
-  color: var(--color-white);
-  min-height: 120px;
-  transition: all 0.2s ease;
+  color: var(--color-neutral-700);
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .paymentCard:hover {
-  background-color: var(--color-primary-800);
-  transform: translateY(-2px);
+  border-color: var(--color-primary-500);
+  color: var(--color-primary-700);
+  transform: translateX(4px);
+}
+
+.paymentCard:active {
+  transform: translateX(2px);
+  background-color: var(--color-primary-50);
+}
+
+.paymentCard svg {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  background-color: var(--color-primary-100);
+  border-radius: var(--radius-md);
+  color: var(--color-primary-700);
+  flex-shrink: 0;
 }
 
 .paymentLabel {
   font-size: var(--font-sm);
   font-weight: 600;
-  text-align: center;
+  text-align: left;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }

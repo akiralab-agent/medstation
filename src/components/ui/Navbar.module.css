@@ -23,27 +23,12 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
   text-decoration: none;
 }
 
-.logoIcon {
-  color: var(--color-primary-600);
-}
-
-.logoText {
-  display: flex;
-  align-items: center;
-  font-size: var(--font-xl);
-  font-weight: 700;
-}
-
-.logoMed {
-  color: var(--color-neutral-700);
-}
-
-.logoStation {
-  color: var(--color-primary-600);
+.logoImage {
+  height: 48px;
+  width: auto;
 }
 
 /* Navigation */

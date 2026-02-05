@@ -38,28 +38,12 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
 }
 
-.logoIcon {
-  color: var(--color-primary-500);
-}
-
-.logoText {
-  display: flex;
-  align-items: center;
-  font-size: var(--font-xl);
-  font-weight: 700;
-  color: var(--color-white);
-}
-
-.logoMed {
-  color: var(--color-neutral-400);
-}
-
-.logoStation {
-  color: var(--color-primary-500);
+.logoImage {
+  height: 50px;
+  width: auto;
 }
 
 .description {

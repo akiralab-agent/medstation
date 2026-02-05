@@ -83,14 +83,12 @@ export function ExamResults() {
                 className={styles.examCard}
               >
                 <h3 className={styles.examName}>{exam.name}</h3>
-                <p className={styles.examDoctor}>{exam.doctor}</p>
                 <p className={styles.examCity}>{exam.city}</p>
                 <div className={styles.examMeta}>
                   <span className={styles.examType}>
                     <ArrowUp size={14} />
                     {exam.type}
                   </span>
-                  <span className={styles.examDate}>{exam.date}</span>
                 </div>
               </Card>
             ))
