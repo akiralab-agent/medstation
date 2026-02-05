@@ -1,0 +1,81 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--color-neutral-50);
+}
+
+.content {
+  padding: var(--spacing-lg);
+}
+
+.inputSection {
+  margin-bottom: var(--spacing-lg);
+}
+
+.label {
+  display: block;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-neutral-700);
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Card Found */
+.cardFound {
+  background-color: var(--color-primary-900);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.successHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--color-success);
+  font-size: var(--font-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cardDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldLabel {
+  font-size: var(--font-xs);
+  color: var(--color-primary-300);
+  text-transform: uppercase;
+}
+
+.fieldValue {
+  font-size: var(--font-md);
+  color: var(--color-white);
+}
+
+.status {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: var(--spacing-sm) 0;
+}

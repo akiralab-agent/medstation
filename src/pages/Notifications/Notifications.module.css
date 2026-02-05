@@ -1,0 +1,43 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--color-neutral-50);
+}
+
+.list {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding-bottom: 100px;
+}
+
+.notificationCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.title {
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.description {
+  font-size: var(--font-sm);
+  color: var(--color-neutral-600);
+  line-height: 1.4;
+}
+
+.date {
+  font-size: var(--font-xs);
+  color: var(--color-neutral-500);
+  margin-top: var(--spacing-xs);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}

@@ -1,0 +1,300 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--color-neutral-50);
+}
+
+/* Patient Selector */
+.patientSelector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-primary-900);
+}
+
+.patientInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-700);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: var(--font-md);
+}
+
+.patientDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.patientLabel {
+  font-size: var(--font-xs);
+  color: var(--color-primary-300);
+}
+
+.patientName {
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.addButton {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Content */
+.content {
+  padding: var(--spacing-lg);
+  padding-bottom: 100px;
+}
+
+.form {
+  margin-top: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.label {
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--color-neutral-700);
+}
+
+.selectWrapper {
+  position: relative;
+}
+
+.selectIcon,
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-neutral-400);
+  z-index: 1;
+}
+
+.select {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px 0 48px;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-md);
+  background-color: var(--color-neutral-50);
+  font-size: var(--font-md);
+  color: var(--color-neutral-900);
+  appearance: none;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary-700);
+  box-shadow: 0 0 0 3px var(--color-primary-50);
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.inputWrapper input {
+  padding-left: 48px !important;
+}
+
+/* Choose Schedule */
+.dateNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-neutral-100);
+}
+
+.dateNavButton {
+  padding: var(--spacing-sm);
+  color: var(--color-neutral-600);
+}
+
+.dateText {
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.doctorList {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding-bottom: 100px;
+}
+
+.doctorCard {
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.doctorHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-sm);
+}
+
+.doctorName {
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.favoriteButton {
+  color: var(--color-neutral-400);
+  padding: 4px;
+}
+
+.favoriteButton.favorited {
+  color: var(--color-primary-600);
+}
+
+.doctorSpecialty {
+  font-size: var(--font-sm);
+  color: var(--color-neutral-600);
+  margin-bottom: var(--spacing-xs);
+}
+
+.doctorServices {
+  font-size: var(--font-sm);
+  color: var(--color-neutral-500);
+  margin-bottom: var(--spacing-xs);
+}
+
+.doctorAddress {
+  font-size: var(--font-sm);
+  color: var(--color-neutral-500);
+  margin-bottom: var(--spacing-sm);
+}
+
+.doctorDistance {
+  font-size: var(--font-xs);
+  color: var(--color-neutral-400);
+  text-align: right;
+  margin-bottom: var(--spacing-md);
+}
+
+.timeSlots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.noSlots {
+  font-size: var(--font-sm);
+  color: var(--color-neutral-500);
+  font-style: italic;
+  padding: var(--spacing-md) 0;
+}
+
+/* Type of Service */
+.serviceCards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
+.serviceCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xl);
+  background-color: var(--color-primary-700);
+  border-radius: var(--radius-lg);
+  color: var(--color-white);
+  transition: all 0.2s ease;
+}
+
+.serviceCard:hover {
+  background-color: var(--color-primary-800);
+  transform: translateY(-2px);
+}
+
+.serviceCard:active {
+  transform: translateY(0);
+}
+
+.serviceIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.serviceLabel {
+  font-size: var(--font-md);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Payment Methods */
+.paymentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
+.paymentCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  background-color: var(--color-primary-700);
+  border-radius: var(--radius-lg);
+  color: var(--color-white);
+  min-height: 120px;
+  transition: all 0.2s ease;
+}
+
+.paymentCard:hover {
+  background-color: var(--color-primary-800);
+  transform: translateY(-2px);
+}
+
+.paymentLabel {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+}
