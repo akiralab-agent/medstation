@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { 
   FileText, 
-  Bell, 
   Calendar, 
   CalendarPlus,
   TrendingUp,
@@ -32,16 +31,15 @@ const quickActions: QuickAction[] = [
     label: 'Exam Results', 
     description: 'View your lab results',
     path: '/exams',
-    color: 'blue'
+    color: 'primary'
   },
   { 
-    id: 'notifications', 
-    icon: Bell, 
-    label: 'Notifications', 
-    description: '3 new messages',
-    path: '/notifications',
-    badge: 3,
-    color: 'amber'
+    id: 'profile', 
+    icon: User, 
+    label: 'My Profile', 
+    description: 'View your information',
+    path: '/profile',
+    color: 'primary'
   },
   { 
     id: 'schedule', 
@@ -49,7 +47,7 @@ const quickActions: QuickAction[] = [
     label: 'My Appointments', 
     description: 'Manage your visits',
     path: '/appointments',
-    color: 'green'
+    color: 'primary'
   },
   { 
     id: 'newSchedule', 
@@ -57,15 +55,15 @@ const quickActions: QuickAction[] = [
     label: 'Book Appointment', 
     description: 'Schedule a new visit',
     path: '/schedule/new',
-    color: 'purple'
+    color: 'primary'
   },
 ];
 
 const stats = [
-  { label: 'Appointments', value: '12', change: '+2', icon: Calendar, color: 'blue' },
-  { label: 'Health Score', value: '94', change: '+5', icon: Heart, color: 'green' },
-  { label: 'Medications', value: '3', change: 'Active', icon: Activity, color: 'purple' },
-  { label: 'Documents', value: '8', change: '+1', icon: FileText, color: 'amber' },
+  { label: 'Appointments', value: '12', change: '+2', icon: Calendar, color: 'primary' },
+  { label: 'Health Score', value: '94', change: '+5', icon: Heart, color: 'primary' },
+  { label: 'Medications', value: '3', change: 'Active', icon: Activity, color: 'primary' },
+  { label: 'Exams', value: '8', change: '+1', icon: FileText, color: 'primary' },
 ];
 
 const upcomingAppointments = [
@@ -119,12 +117,7 @@ export function Dashboard() {
               Here&apos;s what&apos;s happening with your health today
             </p>
           </div>
-          <div className={styles.headerActions}>
-            <button className={styles.actionBtn} onClick={() => navigate('/profile')}>
-              <User size={20} />
-              <span>Profile</span>
-            </button>
-          </div>
+
         </div>
 
         {/* Stats Grid */}

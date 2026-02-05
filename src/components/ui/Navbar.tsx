@@ -5,7 +5,6 @@ import {
   LayoutDashboard, 
   CalendarClock, 
   Heart, 
-  Image, 
   User, 
   Bell, 
   Settings, 
@@ -29,7 +28,6 @@ const navItems: NavItem[] = [
   { id: 'appointments', icon: CalendarClock, label: 'Appointments', path: '/appointments' },
   { id: 'health', icon: Heart, label: 'Health', path: '/health' },
   { id: 'exams', icon: Shield, label: 'Exams', path: '/exams' },
-  { id: 'media', icon: Image, label: 'Media', path: '/media' },
 ];
 
 export function Navbar() {

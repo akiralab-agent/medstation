@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Smartphone, CalendarClock, Heart, Image, User } from 'lucide-react';
+import { Smartphone, CalendarClock, Heart, User } from 'lucide-react';
 import { Badge } from './Badge';
 import styles from './BottomNav.module.css';
 
@@ -15,7 +15,6 @@ const navItems: NavItem[] = [
   { id: 'home', icon: Smartphone, label: 'Home', path: '/dashboard' },
   { id: 'schedule', icon: CalendarClock, label: 'Schedule', path: '/schedule' },
   { id: 'health', icon: Heart, label: 'Health', path: '/health' },
-  { id: 'media', icon: Image, label: 'Media', path: '/media' },
   { id: 'profile', icon: User, label: 'Profile', path: '/profile' },
 ];
 
