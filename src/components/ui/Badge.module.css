@@ -1,0 +1,33 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  position: absolute;
+}
+
+.top-right {
+  top: -4px;
+  right: -4px;
+}
+
+.top-left {
+  top: -4px;
+  left: -4px;
+}
+
+.bottom-right {
+  bottom: -4px;
+  right: -4px;
+}
+
+.bottom-left {
+  bottom: -4px;
+  left: -4px;
+}

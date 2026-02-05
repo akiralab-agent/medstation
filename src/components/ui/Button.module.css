@@ -1,0 +1,115 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  will-change: transform;
+}
+
+/* Sizes */
+.small {
+  padding: 8px 16px;
+  font-size: var(--font-xs);
+  height: 36px;
+}
+
+.medium {
+  padding: 12px 24px;
+  font-size: var(--font-sm);
+  height: 48px;
+}
+
+.large {
+  padding: 16px 32px;
+  font-size: var(--font-md);
+  height: 56px;
+}
+
+/* Variants */
+.primary {
+  background-color: var(--color-primary-700);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+}
+
+.primary:hover:not(.disabled) {
+  background-color: var(--color-primary-800);
+  box-shadow: 0 6px 16px rgba(185, 28, 28, 0.4);
+  transform: translateY(-1px);
+}
+
+.primary:active:not(.disabled) {
+  background-color: var(--color-primary-900);
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.3);
+}
+
+.secondary {
+  background-color: transparent;
+  color: var(--color-primary-700);
+  border: 2px solid var(--color-primary-700);
+}
+
+.secondary:hover:not(.disabled) {
+  background-color: var(--color-primary-50);
+  border-color: var(--color-primary-800);
+  color: var(--color-primary-800);
+  transform: translateY(-1px);
+}
+
+.secondary:active:not(.disabled) {
+  transform: translateY(0);
+}
+
+.success {
+  background-color: var(--color-success);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.success:hover:not(.disabled) {
+  background-color: var(--color-success-dark);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  transform: translateY(-1px);
+}
+
+.success:active:not(.disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.text {
+  background-color: transparent;
+  color: var(--color-primary-700);
+  padding: 8px;
+}
+
+.text:hover:not(.disabled) {
+  background-color: var(--color-primary-50);
+}
+
+.outline {
+  background-color: transparent;
+  color: var(--color-white);
+  border: 2px solid var(--color-white);
+}
+
+.outline:hover:not(.disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Full Width */
+.fullWidth {
+  width: 100%;
+}
+
+/* Disabled */
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
