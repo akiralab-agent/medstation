@@ -303,6 +303,11 @@
   padding-left: 48px !important;
 }
 
+.helperError {
+  color: var(--color-warning-dark);
+  font-size: var(--font-xs);
+}
+
 /* Choose Schedule */
 .dateNav {
   display: flex;

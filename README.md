@@ -2,6 +2,15 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## Environment variables
+
+Create a `.env` file based on `.env.example`.
+
+- `VITE_MASTER_API_BASE_URL`: Required. Base URL for the master API (used by `GET /master/locations`).
+- `VITE_MASTER_API_BEARER_TOKEN`: Optional bearer token.
+- `VITE_MASTER_API_KEY`: Optional API key.
+- `VITE_MASTER_API_KEY_HEADER`: Optional API key header name (default: `x-api-key`).
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
