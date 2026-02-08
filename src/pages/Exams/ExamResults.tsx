@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowUp } from 'lucide-react';
-import { Header, Tabs, Input, Card } from '../../components/ui';
+import { Header, Tabs, Card } from '../../components/ui';
 import styles from './Exams.module.css';
 
 interface Exam {
@@ -48,11 +48,6 @@ const tabs = [
 export function ExamResults() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('results');
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const filteredExams = mockExams.filter((exam) =>
-    exam.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <div className={styles.container}>
@@ -63,19 +58,18 @@ export function ExamResults() {
       />
 
       
-
       <div className={styles.tabsWrapper}>
         <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="dark" />
       </div>
 
       <div className={styles.list}>
         {activeTab === 'results' ? (
-          filteredExams.length === 0 ? (
+          mockExams.length === 0 ? (
             <div className={styles.empty}>
               <p>No exam results found</p>
             </div>
           ) : (
-            filteredExams.map((exam) => (
+            mockExams.map((exam) => (
               <Card
                 key={exam.id}
                 padding="medium"
