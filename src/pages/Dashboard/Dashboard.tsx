@@ -1,7 +1,8 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  FileText, 
-  Calendar, 
+import {
+  FileText,
+  Calendar,
   CalendarPlus,
   TrendingUp,
   Activity,
@@ -11,6 +12,7 @@ import {
   Shield
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { fetchAppointmentsByPerson, type AppointmentItem } from '../../services/appointments';
 import styles from './Dashboard.module.css';
 
 interface QuickAction {
@@ -58,26 +60,11 @@ const quickActions: QuickAction[] = [
   },
 ];
 
-const upcomingAppointments = [
-  {
-    id: '1',
-    doctor: 'Dr. Sarah Johnson',
-    specialty: 'Cardiology',
-    date: '2026-02-10',
-    time: '03:30 PM',
-    type: 'In Person',
-    status: 'confirmed',
-  },
-  {
-    id: '2',
-    doctor: 'Dr. Michael Chen',
-    specialty: 'General Medicine',
-    date: '2026-02-15',
-    time: '10:00 AM',
-    type: 'Video Call',
-    status: 'pending',
-  },
-];
+function formatTime(dateString?: string) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
 
 const recentActivity = [
   { id: '1', text: 'Blood test results uploaded', time: '2 hours ago', icon: FileText },
@@ -88,6 +75,27 @@ const recentActivity = [
 export function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [upcomingAppointments, setUpcomingAppointments] = useState<AppointmentItem[]>([]);
+  const [loadingAppointments, setLoadingAppointments] = useState(true);
+
+  useEffect(() => {
+    const personId = import.meta.env.VITE_PERSON_ID?.trim();
+    if (!personId) {
+      setLoadingAppointments(false);
+      return;
+    }
+
+    fetchAppointmentsByPerson(personId)
+      .then((items) => {
+        const now = new Date();
+        const upcoming = items
+          .filter((apt) => apt.appointmentDateTime && new Date(apt.appointmentDateTime) >= now)
+          .sort((a, b) => (a.appointmentDateTime ?? '').localeCompare(b.appointmentDateTime ?? ''));
+        setUpcomingAppointments(upcoming.slice(0, 3));
+      })
+      .catch(() => {})
+      .finally(() => setLoadingAppointments(false));
+  }, []);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -152,35 +160,41 @@ export function Dashboard() {
               </button>
             </div>
             <div className={styles.appointmentsList}>
-              {upcomingAppointments.map((apt) => (
-                <div key={apt.id} className={styles.appointmentItem}>
-                  <div className={styles.appointmentDate}>
-                    <span className={styles.dateDay}>
-                      {new Date(apt.date).getDate()}
-                    </span>
-                    <span className={styles.dateMonth}>
-                      {new Date(apt.date).toLocaleString('default', { month: 'short' }).toUpperCase()}
-                    </span>
-                  </div>
-                  <div className={styles.appointmentDetails}>
-                    <h3 className={styles.doctorName}>{apt.doctor}</h3>
-                    <p className={styles.specialty}>{apt.specialty}</p>
-                    <div className={styles.appointmentMeta}>
-                      <span className={styles.metaItem}>
-                        <Clock size={14} />
-                        {apt.time}
-                      </span>
-                      <span className={styles.metaItem}>
-                        <Shield size={14} />
-                        {apt.type}
-                      </span>
+              {loadingAppointments ? (
+                <p style={{ color: 'var(--color-neutral-500)', fontSize: 'var(--font-sm)' }}>Loading...</p>
+              ) : upcomingAppointments.length === 0 ? (
+                <p style={{ color: 'var(--color-neutral-500)', fontSize: 'var(--font-sm)' }}>No upcoming appointments</p>
+              ) : (
+                upcomingAppointments.map((apt) => {
+                  const dt = apt.appointmentDateTime ? new Date(apt.appointmentDateTime) : null;
+                  return (
+                    <div key={apt.id} className={styles.appointmentItem} onClick={() => navigate(`/appointments/${apt.id}`)} style={{ cursor: 'pointer' }}>
+                      <div className={styles.appointmentDate}>
+                        <span className={styles.dateDay}>
+                          {dt?.getDate() ?? '—'}
+                        </span>
+                        <span className={styles.dateMonth}>
+                          {dt?.toLocaleString('default', { month: 'short' }).toUpperCase() ?? ''}
+                        </span>
+                      </div>
+                      <div className={styles.appointmentDetails}>
+                        <h3 className={styles.doctorName}>{apt.resourceName || 'Provider'}</h3>
+                        <p className={styles.specialty}>{apt.eventName || ''}</p>
+                        <div className={styles.appointmentMeta}>
+                          <span className={styles.metaItem}>
+                            <Clock size={14} />
+                            {formatTime(apt.appointmentDateTime)}
+                          </span>
+                          <span className={styles.metaItem}>
+                            <Shield size={14} />
+                            {apt.locationName || ''}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <span className={`${styles.statusBadge} ${styles[apt.status]}`}>
-                    {apt.status}
-                  </span>
-                </div>
-              ))}
+                  );
+                })
+              )}
             </div>
           </section>
         </div>
