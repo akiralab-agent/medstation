@@ -1,60 +1,174 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { Header, TimeSlot, Modal } from '../../components/ui';
+import {
+  fetchAvailabilityForDate,
+  fetchResourcesByLocation,
+  type AvailabilitySlot,
+  type ResourceItem,
+} from '../../services/scheduling';
 import styles from './Schedule.module.css';
 
-interface Doctor {
-  id: string;
-  name: string;
-  specialty: string;
-  services: string;
-  address: string;
-  distance: string;
-  timeSlots: string[];
-  favorited: boolean;
+interface ChooseScheduleNavigationState {
+  type?: string;
+  specialty?: string;
+  location?: string;
+  locationId?: string;
 }
 
-const mockDoctors: Doctor[] = [
-  {
-    id: '1',
-    name: 'Dr. Sarah Johnson',
-    specialty: 'Cardiology',
-    services: 'Consultation, ECG, Stress Test',
-    address: '123 Medical Center Dr, Miami Beach, FL',
-    distance: '2.5 Km',
-    timeSlots: ['11:30 AM', '1:00 PM', '3:30 PM', '4:30 PM'],
-    favorited: false,
-  },
-  {
-    id: '2',
-    name: 'Dr. Michael Chen',
-    specialty: 'General Practice',
-    services: 'General Consultation, Check-up',
-    address: '456 Health Ave, Miami, FL',
-    distance: '4.2 Km',
-    timeSlots: ['9:00 AM', '10:30 AM', '2:00 PM'],
-    favorited: true,
-  },
-  {
-    id: '3',
-    name: 'Dr. Emily Rodriguez',
-    specialty: 'Dermatology',
-    services: 'Skin Consultation, Procedures',
-    address: '789 Wellness Blvd, Coral Gables, FL',
-    distance: '6.8 Km',
-    timeSlots: [],
-    favorited: false,
-  },
-];
+interface SelectedSlot {
+  resourceId: string;
+  resourceName: string;
+  startDateTime: string;
+  time: string;
+}
+
+const formatTime = (dateTime: string) => {
+  const parsed = new Date(dateTime);
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+  }
+
+  const compactTime = dateTime.match(/T(\d{2})(\d{2})/);
+  if (compactTime) {
+    return `${compactTime[1]}:${compactTime[2]}`;
+  }
+
+  const regularTime = dateTime.match(/T(\d{2}):(\d{2})/);
+  if (regularTime) {
+    return `${regularTime[1]}:${regularTime[2]}`;
+  }
+
+  return dateTime;
+};
+
+const groupSlotsByResource = (slots: AvailabilitySlot[]) =>
+  slots.reduce<Record<string, AvailabilitySlot[]>>((acc, slot) => {
+    const normalizedId = slot.resourceId.trim().toLowerCase();
+    if (!acc[normalizedId]) {
+      acc[normalizedId] = [];
+    }
+    acc[normalizedId].push(slot);
+    return acc;
+  }, {});
 
 export function ChooseSchedule() {
   const navigate = useNavigate();
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 8, 4));
-  const [selectedSlot, setSelectedSlot] = useState<{ doctorId: string; time: string } | null>(null);
+  const routerLocation = useLocation();
+  const state = (routerLocation.state ?? {}) as ChooseScheduleNavigationState;
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [doctors, setDoctors] = useState<Doctor[]>(mockDoctors);
+  const [resources, setResources] = useState<ResourceItem[]>([]);
+  const [slotsByResource, setSlotsByResource] = useState<Record<string, AvailabilitySlot[]>>({});
+  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
   const [dateAnimation, setDateAnimation] = useState<'slide-left' | 'slide-right' | null>(null);
+  const [isLoadingResources, setIsLoadingResources] = useState(false);
+  const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
+  const [resourcesError, setResourcesError] = useState<string | null>(null);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+
+  const selectedLocationId = state.locationId?.trim() || '';
+  const selectedLocationName = state.location?.trim() || '';
+  const selectedSpecialty = state.specialty?.trim() || 'General';
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadResources = async () => {
+      if (!selectedLocationId && !selectedLocationName) {
+        setResources([]);
+        setResourcesError('Select a location first to load providers.');
+        return;
+      }
+
+      setIsLoadingResources(true);
+      setResourcesError(null);
+
+      try {
+        const nextResources = await fetchResourcesByLocation({
+          locationId: selectedLocationId || undefined,
+          address: selectedLocationId ? undefined : selectedLocationName,
+          top: 1000,
+        });
+
+        if (!isMounted) {
+          return;
+        }
+
+        setResources(nextResources);
+      } catch {
+        if (!isMounted) {
+          return;
+        }
+
+        setResources([]);
+        setResourcesError('Unable to load providers for the selected location.');
+      } finally {
+        if (isMounted) {
+          setIsLoadingResources(false);
+        }
+      }
+    };
+
+    void loadResources();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedLocationId, selectedLocationName]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadAvailability = async () => {
+      if (!selectedLocationId || resources.length === 0) {
+        setSlotsByResource({});
+        setAvailabilityError(
+          selectedLocationId ? null : 'Location ID is required to fetch available slots.'
+        );
+        return;
+      }
+
+      setIsLoadingAvailability(true);
+      setAvailabilityError(null);
+
+      try {
+        const availabilitySlots = await fetchAvailabilityForDate({
+          date: currentDate,
+          locationIds: [selectedLocationId],
+          resourceIds: resources.map((resource) => resource.id),
+        });
+
+        if (!isMounted) {
+          return;
+        }
+
+        setSlotsByResource(groupSlotsByResource(availabilitySlots));
+      } catch {
+        if (!isMounted) {
+          return;
+        }
+
+        setSlotsByResource({});
+        setAvailabilityError('Unable to load available slots for this date.');
+      } finally {
+        if (isMounted) {
+          setIsLoadingAvailability(false);
+        }
+      }
+    };
+
+    void loadAvailability();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentDate, resources, selectedLocationId]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
@@ -65,32 +179,55 @@ export function ChooseSchedule() {
   };
 
   const changeDate = (days: number) => {
+    setSelectedSlot(null);
     setDateAnimation(days > 0 ? 'slide-left' : 'slide-right');
     setTimeout(() => {
-      const newDate = new Date(currentDate);
-      newDate.setDate(newDate.getDate() + days);
-      setCurrentDate(newDate);
+      setCurrentDate((previousDate) => {
+        const nextDate = new Date(previousDate);
+        nextDate.setDate(nextDate.getDate() + days);
+        return nextDate;
+      });
       setDateAnimation(null);
     }, 200);
   };
 
-  const toggleFavorite = (doctorId: string) => {
-    setDoctors(doctors.map((d) =>
-      d.id === doctorId ? { ...d, favorited: !d.favorited } : d
-    ));
+  const toggleFavorite = (resourceId: string) => {
+    setFavorites((previous) => ({
+      ...previous,
+      [resourceId]: !previous[resourceId],
+    }));
   };
 
-  const handleTimeSelect = (doctorId: string, time: string) => {
-    setSelectedSlot({ doctorId, time });
+  const handleTimeSelect = (resource: ResourceItem, slot: AvailabilitySlot) => {
+    setSelectedSlot({
+      resourceId: resource.id,
+      resourceName: resource.resourceDisplayName,
+      startDateTime: slot.startDateTime,
+      time: formatTime(slot.startDateTime),
+    });
     setShowConfirmModal(true);
   };
 
   const handleConfirm = () => {
     setShowConfirmModal(false);
-    navigate('/schedule/service-type', { state: { slot: selectedSlot } });
+    if (!selectedSlot) {
+      return;
+    }
+
+    navigate('/schedule/service-type', {
+      state: {
+        slot: selectedSlot,
+        locationId: selectedLocationId,
+      },
+    });
   };
 
-  const selectedDoctor = doctors.find((d) => d.id === selectedSlot?.doctorId);
+  const selectedResource = resources.find((resource) => resource.id === selectedSlot?.resourceId);
+  const resourcesWithSlots = resources.filter((resource) => {
+    const resourceId = resource.id.trim().toLowerCase();
+    return (slotsByResource[resourceId] ?? []).length > 0;
+  });
+  const displayedResources = isLoadingAvailability ? resources : resourcesWithSlots;
 
   return (
     <div className={styles.container}>
@@ -109,39 +246,61 @@ export function ChooseSchedule() {
       </div>
 
       <div className={`${styles.doctorList} ${dateAnimation ? styles.animateList : ''}`}>
-        {doctors.map((doctor) => (
-          <div key={doctor.id} className={styles.doctorCard}>
-            <div className={styles.doctorHeader}>
-              <h3 className={styles.doctorName}>{doctor.name}</h3>
-              <button
-                className={`${styles.favoriteButton} ${doctor.favorited ? styles.favorited : ''}`}
-                onClick={() => toggleFavorite(doctor.id)}
-              >
-                <Heart size={20} fill={doctor.favorited ? 'currentColor' : 'none'} />
-              </button>
-            </div>
-            <p className={styles.doctorSpecialty}>{doctor.specialty}</p>
-            <p className={styles.doctorServices}>{doctor.services}</p>
-            <p className={styles.doctorAddress}>{doctor.address}</p>
-            <p className={styles.doctorDistance}>{doctor.distance}</p>
+        {isLoadingResources && (
+          <p className={styles.statusMessage}>Loading providers for this location...</p>
+        )}
+        {resourcesError && <p className={styles.statusMessage}>{resourcesError}</p>}
+        {!isLoadingResources && !resourcesError && resources.length === 0 && (
+          <p className={styles.statusMessage}>No providers found for this location.</p>
+        )}
+        {availabilityError && <p className={styles.statusMessage}>{availabilityError}</p>}
+        {!isLoadingResources && !resourcesError && !isLoadingAvailability && !availabilityError &&
+          resources.length > 0 && resourcesWithSlots.length === 0 && (
+            <p className={styles.statusMessage}>There are no available slots on this day.</p>
+          )}
 
-            {doctor.timeSlots.length > 0 ? (
-              <div className={styles.timeSlots}>
-                {doctor.timeSlots.map((time) => (
-                  <TimeSlot
-                    key={time}
-                    time={time}
-                    onClick={() => handleTimeSelect(doctor.id, time)}
-                  />
-                ))}
+        {displayedResources.map((resource) => {
+          const resourceId = resource.id.trim().toLowerCase();
+          const resourceSlots = slotsByResource[resourceId] ?? [];
+
+          return (
+            <div key={resource.id} className={styles.doctorCard}>
+              <div className={styles.doctorHeader}>
+                <h3 className={styles.doctorName}>{resource.resourceDisplayName}</h3>
+                <button
+                  className={`${styles.favoriteButton} ${favorites[resource.id] ? styles.favorited : ''}`}
+                  onClick={() => toggleFavorite(resource.id)}
+                >
+                  <Heart size={20} fill={favorites[resource.id] ? 'currentColor' : 'none'} />
+                </button>
               </div>
-            ) : (
-              <p className={styles.noSlots}>
-                There are no available appointments in the next 7 days.
-              </p>
-            )}
-          </div>
-        ))}
+              <p className={styles.doctorSpecialty}>{selectedSpecialty}</p>
+              <p className={styles.doctorServices}>Consultation</p>
+              <p className={styles.doctorAddress}>{selectedLocationName || 'Selected location'}</p>
+
+              {isLoadingAvailability ? (
+                <p className={styles.noSlots}>Loading available slots...</p>
+              ) : (
+                <div className={styles.timeSlots}>
+                  {resourceSlots.map((slot) => {
+                    const slotTime = formatTime(slot.startDateTime);
+                    return (
+                      <TimeSlot
+                        key={`${resource.id}-${slot.startDateTime}`}
+                        time={slotTime}
+                        selected={
+                          selectedSlot?.resourceId === resource.id &&
+                          selectedSlot?.startDateTime === slot.startDateTime
+                        }
+                        onClick={() => handleTimeSelect(resource, slot)}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <Modal
@@ -155,10 +314,10 @@ export function ChooseSchedule() {
       >
         <div style={{ textAlign: 'left', marginTop: '16px' }}>
           <p style={{ color: 'var(--color-neutral-600)', fontSize: '14px' }}>
-            {selectedDoctor?.address}
+            {selectedLocationName}
           </p>
           <p style={{ color: 'var(--color-neutral-600)', fontSize: '14px' }}>
-            Office Hour
+            {selectedResource?.resourceDisplayName}
           </p>
           <p style={{ color: 'var(--color-neutral-900)', fontSize: '18px', fontWeight: 600 }}>
             {selectedSlot?.time}

@@ -14,12 +14,18 @@ const tabs = [
 export function ScheduleAppointment() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const telehealthLocationId = import.meta.env.VITE_TELEHEALTH_LOCATION_ID?.trim() ?? '';
+  const normalizedTelehealthLocationId = telehealthLocationId.toLowerCase();
+  const showSpecialtySelector = import.meta.env.VITE_SHOW_SPECIALTY_SELECTOR !== 'false';
   const [activeTab, setActiveTab] = useState('inperson');
   const [specialty, setSpecialty] = useState('');
   const [location, setLocation] = useState('');
   const [locations, setLocations] = useState<LocationItem[]>([]);
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [locationsError, setLocationsError] = useState<string | null>(null);
+  const inPersonLocations = locations.filter(
+    (item) => item.id.trim().toLowerCase() !== normalizedTelehealthLocationId
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -54,11 +60,39 @@ export function ScheduleAppointment() {
     };
   }, []);
 
+  useEffect(() => {
+    if (activeTab !== 'inperson') {
+      return;
+    }
+
+    if (!location) {
+      return;
+    }
+
+    if (location.trim().toLowerCase() === normalizedTelehealthLocationId) {
+      setLocation('');
+    }
+  }, [activeTab, location, normalizedTelehealthLocationId]);
+
   const handleSearch = () => {
-    const selectedLocation = activeTab === 'telemedicine' ? '' : location;
+    const telehealthLocationOption = locations.find(
+      (item) => item.id.trim().toLowerCase() === normalizedTelehealthLocationId
+    );
+    const selectedLocationOption = inPersonLocations.find((item) => item.id === location);
+    const selectedLocationId = activeTab === 'telemedicine'
+      ? telehealthLocationId
+      : (selectedLocationOption?.id ?? '');
+    const selectedLocationName = activeTab === 'telemedicine'
+      ? (telehealthLocationOption?.name ?? 'Telehealth')
+      : (selectedLocationOption?.name ?? location);
 
     navigate('/schedule/choose', {
-      state: { type: activeTab, specialty, location: selectedLocation },
+      state: {
+        type: activeTab,
+        specialty,
+        location: selectedLocationName,
+        locationId: selectedLocationId,
+      },
     });
   };
 
@@ -85,25 +119,27 @@ export function ScheduleAppointment() {
         <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
         <div className={styles.form}>
-          <div className={styles.field}>
-            <label className={styles.label}>What are you looking for?</label>
-            <div className={styles.selectWrapper}>
-              <Search size={20} className={styles.selectIcon} />
-              <select
-                className={styles.select}
-                value={specialty}
-                onChange={(e) => setSpecialty(e.target.value)}
-              >
-                <option value="">Select a specialty</option>
-                <option value="cardiology">Cardiology</option>
-                <option value="dermatology">Dermatology</option>
-                <option value="general">General Practice</option>
-                <option value="neurology">Neurology</option>
-                <option value="orthopedics">Orthopedics</option>
-                <option value="pediatrics">Pediatrics</option>
-              </select>
+          {showSpecialtySelector && (
+            <div className={styles.field}>
+              <label className={styles.label}>What are you looking for?</label>
+              <div className={styles.selectWrapper}>
+                <Search size={20} className={styles.selectIcon} />
+                <select
+                  className={styles.select}
+                  value={specialty}
+                  onChange={(e) => setSpecialty(e.target.value)}
+                >
+                  <option value="">Select a specialty</option>
+                  <option value="cardiology">Cardiology</option>
+                  <option value="dermatology">Dermatology</option>
+                  <option value="general">General Practice</option>
+                  <option value="neurology">Neurology</option>
+                  <option value="orthopedics">Orthopedics</option>
+                  <option value="pediatrics">Pediatrics</option>
+                </select>
+              </div>
             </div>
-          </div>
+          )}
 
           {activeTab !== 'telemedicine' && (
             <div className={styles.field}>
@@ -120,8 +156,8 @@ export function ScheduleAppointment() {
                     <option value="">
                       {isLoadingLocations ? 'Loading locations...' : 'Select a location'}
                     </option>
-                    {locations.map((item) => (
-                      <option key={item.id} value={item.name}>
+                    {inPersonLocations.map((item) => (
+                      <option key={item.id} value={item.id}>
                         {item.name}
                       </option>
                     ))}
@@ -145,7 +181,7 @@ export function ScheduleAppointment() {
             variant="success"
             fullWidth
             onClick={handleSearch}
-            disabled={!specialty}
+            disabled={showSpecialtySelector && !specialty}
           >
             SEARCH SCHEDULES
           </Button>

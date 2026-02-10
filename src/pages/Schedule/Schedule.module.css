@@ -391,6 +391,11 @@
   padding-bottom: 100px;
 }
 
+.statusMessage {
+  font-size: var(--font-sm);
+  color: var(--color-neutral-600);
+}
+
 .doctorCard {
   background-color: var(--color-white);
   border-radius: var(--radius-md);
