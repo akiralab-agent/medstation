@@ -12,6 +12,7 @@ interface ImportMetaEnv {
   readonly VITE_AVAILABILITY_TIME_RANGE_START?: string;
   readonly VITE_AVAILABILITY_TIME_RANGE_END?: string;
   readonly VITE_SHOW_SPECIALTY_SELECTOR?: string;
+  readonly VITE_PERSON_ID?: string;
 }
 
 interface ImportMeta {

@@ -7,7 +7,12 @@ export function PersonalData() {
   const { user } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [dateOfBirth, setDateOfBirth] = useState(user?.dateOfBirth || '');
-  const [phone, setPhone] = useState(user?.phone || '');
+  const [phone, setPhone] = useState(user?.cellPhone || user?.phone || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [addressLine1, setAddressLine1] = useState(user?.addressLine1 || '');
+  const [city, setCity] = useState(user?.city || '');
+  const [state, setState] = useState(user?.state || '');
+  const [zip, setZip] = useState(user?.zip || '');
   const [loading, setLoading] = useState(false);
 
   const handleSave = () => {
@@ -56,6 +61,51 @@ export function PersonalData() {
               onChange={(e) => setPhone(formatPhone(e.target.value))}
               placeholder="(555) 555-5555"
             />
+          </div>
+        </div>
+
+        <div className={styles.formGroup}>
+          <Input
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="email@example.com"
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <Input
+            label="Address"
+            value={addressLine1}
+            onChange={(e) => setAddressLine1(e.target.value)}
+            placeholder="Street address"
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <Input
+            label="City"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+            <div style={{ flex: 1 }}>
+              <Input
+                label="State"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <Input
+                label="ZIP"
+                value={zip}
+                onChange={(e) => setZip(e.target.value)}
+              />
+            </div>
           </div>
         </div>
 

@@ -1,120 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header, Card, Tabs } from '../../components/ui';
+import { fetchAppointmentsByPerson, type AppointmentItem } from '../../services/appointments';
 import styles from './Appointments.module.css';
-
-interface Appointment {
-  id: string;
-  date: string;
-  time: string;
-  doctor: string;
-  specialty: string;
-  clinic: string;
-  type: 'in-person' | 'telemedicine';
-  status: 'upcoming' | 'completed' | 'canceled';
-}
-
-const mockAppointments: Appointment[] = [
-  {
-    id: '1',
-    date: 'Sep 04, 2026',
-    time: '03:30 PM',
-    doctor: 'Dr. Sarah Johnson',
-    specialty: 'Cardiology',
-    clinic: 'Miami Medical Center',
-    type: 'in-person',
-    status: 'upcoming',
-  },
-  {
-    id: '2',
-    date: 'Sep 10, 2026',
-    time: '10:00 AM',
-    doctor: 'Dr. Michael Chen',
-    specialty: 'General Practice',
-    clinic: 'Health Plus Clinic',
-    type: 'telemedicine',
-    status: 'upcoming',
-  },
-  {
-    id: '3',
-    date: 'Sep 15, 2026',
-    time: '02:00 PM',
-    doctor: 'Dr. Emily Rodriguez',
-    specialty: 'Dermatology',
-    clinic: 'Skin Care Center',
-    type: 'in-person',
-    status: 'upcoming',
-  },
-  {
-    id: '4',
-    date: 'Sep 20, 2026',
-    time: '09:00 AM',
-    doctor: 'Dr. James Wilson',
-    specialty: 'Orthopedics',
-    clinic: 'City Hospital',
-    type: 'in-person',
-    status: 'upcoming',
-  },
-  {
-    id: '5',
-    date: 'Aug 20, 2026',
-    time: '02:00 PM',
-    doctor: 'Dr. Emily Rodriguez',
-    specialty: 'Dermatology',
-    clinic: 'Skin Care Center',
-    type: 'in-person',
-    status: 'completed',
-  },
-  {
-    id: '6',
-    date: 'Aug 15, 2026',
-    time: '11:00 AM',
-    doctor: 'Dr. Maria Santos',
-    specialty: 'Pediatrics',
-    clinic: 'Children Clinic',
-    type: 'telemedicine',
-    status: 'completed',
-  },
-  {
-    id: '7',
-    date: 'Aug 10, 2026',
-    time: '03:00 PM',
-    doctor: 'Dr. Robert Brown',
-    specialty: 'Neurology',
-    clinic: 'Neuro Center',
-    type: 'in-person',
-    status: 'completed',
-  },
-  {
-    id: '8',
-    date: 'Aug 05, 2026',
-    time: '10:30 AM',
-    doctor: 'Dr. Lisa Anderson',
-    specialty: 'Gynecology',
-    clinic: 'Women Health Center',
-    type: 'in-person',
-    status: 'canceled',
-  },
-];
 
 const tabs = [
   { id: 'upcoming', label: 'Upcoming' },
   { id: 'past', label: 'Past' },
 ];
 
-const statusLabels: Record<Appointment['status'], string> = {
-  upcoming: 'Upcoming',
-  completed: 'Completed',
-  canceled: 'Canceled',
-};
+function formatDate(dateString?: string) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+}
+
+function formatTime(dateString?: string) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
+
+function isUpcoming(dateString?: string) {
+  if (!dateString) return false;
+  return new Date(dateString) >= new Date();
+}
 
 export function MyAppointments() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('upcoming');
+  const [appointments, setAppointments] = useState<AppointmentItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredAppointments = mockAppointments.filter((apt) =>
-    activeTab === 'upcoming' ? apt.status === 'upcoming' : apt.status !== 'upcoming'
-  );
+  useEffect(() => {
+    const personId = import.meta.env.VITE_PERSON_ID?.trim();
+    if (!personId) {
+      setError('Missing VITE_PERSON_ID');
+      setLoading(false);
+      return;
+    }
+
+    fetchAppointmentsByPerson(personId)
+      .then(setAppointments)
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load appointments'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = appointments.filter((apt) => {
+    const upcoming = isUpcoming(apt.appointmentDateTime);
+    return activeTab === 'upcoming' ? upcoming : !upcoming;
+  });
 
   return (
     <div className={styles.container}>
@@ -131,12 +67,20 @@ export function MyAppointments() {
       </div>
 
       <div className={styles.list}>
-        {filteredAppointments.length === 0 ? (
+        {loading ? (
+          <div className={styles.empty}>
+            <p>Loading...</p>
+          </div>
+        ) : error ? (
+          <div className={styles.empty}>
+            <p>{error}</p>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className={styles.empty}>
             <p>No appointments found</p>
           </div>
         ) : (
-          filteredAppointments.map((appointment) => (
+          filtered.map((appointment) => (
             <Card
               key={appointment.id}
               padding="medium"
@@ -144,23 +88,18 @@ export function MyAppointments() {
               className={styles.appointmentCard}
             >
               <div className={styles.dateTime}>
-                <span className={styles.date}>{appointment.date}</span>
-                <span className={styles.time}>{appointment.time}</span>
+                <span className={styles.date}>{formatDate(appointment.appointmentDateTime)}</span>
+                <span className={styles.time}>{formatTime(appointment.appointmentDateTime)}</span>
               </div>
               <div className={styles.info}>
                 <div className={styles.infoHeader}>
-                  <h3 className={styles.doctor}>{appointment.doctor}</h3>
-                  <span className={`${styles.statusBadge} ${styles[appointment.status]}`}>
-                    {statusLabels[appointment.status]}
+                  <h3 className={styles.doctor}>{appointment.resourceName || 'Provider'}</h3>
+                  <span className={`${styles.statusBadge} ${isUpcoming(appointment.appointmentDateTime) ? styles.upcoming : styles.completed}`}>
+                    {isUpcoming(appointment.appointmentDateTime) ? 'Upcoming' : 'Completed'}
                   </span>
                 </div>
-                <p className={styles.specialty}>{appointment.specialty}</p>
-                <p className={styles.clinic}>{appointment.clinic}</p>
-                <div className={styles.metaRow}>
-                  <span className={`${styles.typeBadge} ${styles[appointment.type]}`}>
-                    {appointment.type === 'telemedicine' ? 'Online' : 'In-person'}
-                  </span>
-                </div>
+                <p className={styles.specialty}>{appointment.eventName || ''}</p>
+                <p className={styles.clinic}>{appointment.locationName || ''}</p>
               </div>
             </Card>
           ))
