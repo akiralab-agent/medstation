@@ -1,61 +1,68 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Header, Card, Tabs } from '../../components/ui';
 import { fetchAppointmentsByPerson, type AppointmentItem } from '../../services/appointments';
 import styles from './Appointments.module.css';
 
-const tabs = [
-  { id: 'upcoming', label: 'Upcoming' },
-  { id: 'past', label: 'Past' },
-];
-
-function formatDate(dateString?: string) {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-}
-
-function formatTime(dateString?: string) {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-}
-
 function isUpcoming(dateString?: string) {
-  if (!dateString) return false;
+  if (!dateString) {
+    return false;
+  }
   return new Date(dateString) >= new Date();
 }
 
 export function MyAppointments() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('upcoming');
   const [appointments, setAppointments] = useState<AppointmentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const tabs = [
+    { id: 'upcoming', label: t('appointments.upcoming') },
+    { id: 'past', label: t('appointments.past') },
+  ];
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) {
+      return '';
+    }
+    const date = new Date(dateString);
+    return date.toLocaleDateString(i18n.language, { month: 'short', day: '2-digit', year: 'numeric' });
+  };
+
+  const formatTime = (dateString?: string) => {
+    if (!dateString) {
+      return '';
+    }
+    const date = new Date(dateString);
+    return date.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+  };
 
   useEffect(() => {
     const personId = import.meta.env.VITE_PERSON_ID?.trim();
     if (!personId) {
-      setError('Missing VITE_PERSON_ID');
+      setError(t('appointments.missingPersonId'));
       setLoading(false);
       return;
     }
 
     fetchAppointmentsByPerson(personId)
       .then(setAppointments)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load appointments'))
+      .catch(() => setError(t('appointments.failedToLoad')))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
-  const filtered = appointments.filter((apt) => {
-    const upcoming = isUpcoming(apt.appointmentDateTime);
+  const filtered = appointments.filter((appointment) => {
+    const upcoming = isUpcoming(appointment.appointmentDateTime);
     return activeTab === 'upcoming' ? upcoming : !upcoming;
   });
 
   return (
     <div className={styles.container}>
       <Header
-        title="My Appointments"
+        title={t('appointments.myAppointments')}
         showBackButton
         variant="primary"
         rightActions={['book']}
@@ -69,7 +76,7 @@ export function MyAppointments() {
       <div className={styles.list}>
         {loading ? (
           <div className={styles.empty}>
-            <p>Loading...</p>
+            <p>{t('common.loading')}</p>
           </div>
         ) : error ? (
           <div className={styles.empty}>
@@ -77,7 +84,7 @@ export function MyAppointments() {
           </div>
         ) : filtered.length === 0 ? (
           <div className={styles.empty}>
-            <p>No appointments found</p>
+            <p>{t('appointments.noAppointmentsFound')}</p>
           </div>
         ) : (
           filtered.map((appointment) => (
@@ -93,9 +100,9 @@ export function MyAppointments() {
               </div>
               <div className={styles.info}>
                 <div className={styles.infoHeader}>
-                  <h3 className={styles.doctor}>{appointment.resourceName || 'Provider'}</h3>
+                  <h3 className={styles.doctor}>{appointment.resourceName || t('appointments.provider')}</h3>
                   <span className={`${styles.statusBadge} ${isUpcoming(appointment.appointmentDateTime) ? styles.upcoming : styles.completed}`}>
-                    {isUpcoming(appointment.appointmentDateTime) ? 'Upcoming' : 'Completed'}
+                    {isUpcoming(appointment.appointmentDateTime) ? t('appointments.upcoming') : t('appointments.completed')}
                   </span>
                 </div>
                 <p className={styles.specialty}>{appointment.eventName || ''}</p>

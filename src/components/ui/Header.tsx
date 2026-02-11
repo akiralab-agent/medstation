@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Plus, SlidersHorizontal } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import styles from './Header.module.css';
 
 type HeaderAction = 'search' | 'add' | 'filter' | 'book';
@@ -22,10 +23,6 @@ const actionIcons = {
   book: Plus,
 };
 
-const actionLabels: Record<string, string> = {
-  book: 'Book Appointment',
-};
-
 export function Header({
   title,
   showBackButton = false,
@@ -35,7 +32,11 @@ export function Header({
   children,
 }: HeaderProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [animatingAction, setAnimatingAction] = useState<string | null>(null);
+  const actionLabels: Partial<Record<HeaderAction, string>> = {
+    book: t('appointments.bookAppointment'),
+  };
 
   const handleActionClick = (action: HeaderAction) => {
     setAnimatingAction(action);

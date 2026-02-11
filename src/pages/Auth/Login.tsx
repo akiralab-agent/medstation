@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  Mail, 
-  Lock, 
-  HeartPulse, 
-  Eye, 
-  EyeOff, 
+import { useTranslation } from 'react-i18next';
+import {
+  Mail,
+  Lock,
+  HeartPulse,
+  Eye,
+  EyeOff,
   ArrowRight,
   Shield,
   Clock,
-  FileText
+  FileText,
 } from 'lucide-react';
 import { Button } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
@@ -17,16 +18,17 @@ import styles from './Auth.module.css';
 
 export function Login() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [errorKey, setErrorKey] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setErrorKey('');
     setLoading(true);
 
     try {
@@ -34,10 +36,10 @@ export function Login() {
       if (success) {
         navigate('/dashboard');
       } else {
-        setError('Invalid credentials. Please try again.');
+        setErrorKey('auth.errors.invalidCredentials');
       }
     } catch {
-      setError('An error occurred. Please try again.');
+      setErrorKey('auth.errors.generic');
     } finally {
       setLoading(false);
     }
@@ -45,7 +47,6 @@ export function Login() {
 
   return (
     <div className={styles.authPage}>
-      {/* Left Side - Branding */}
       <div className={styles.authBrand}>
         <div className={styles.brandContent}>
           <div className={styles.brandLogo}>
@@ -53,51 +54,47 @@ export function Login() {
             <span>medstation</span>
           </div>
           <h1 className={styles.brandTitle}>
-            Your Health,<br />
-            <span>Made Simple</span>
+            {t('auth.login.brandTitleLine1')}<br />
+            <span>{t('auth.login.brandTitleLine2')}</span>
           </h1>
-          <p className={styles.brandDescription}>
-            Access your medical records, schedule appointments, and manage 
-            your healthcare journey all in one secure platform.
-          </p>
-          
+          <p className={styles.brandDescription}>{t('auth.brandDescription')}</p>
+
           <div className={styles.features}>
             <div className={styles.feature}>
               <Shield size={24} />
-              <span>Secure & Private</span>
+              <span>{t('auth.featureSecure')}</span>
             </div>
             <div className={styles.feature}>
               <Clock size={24} />
-              <span>24/7 Access</span>
+              <span>{t('auth.featureAccess')}</span>
             </div>
             <div className={styles.feature}>
               <FileText size={24} />
-              <span>Digital Records</span>
+              <span>{t('auth.featureRecords')}</span>
             </div>
           </div>
         </div>
-        
+
         <div className={styles.brandPattern} />
       </div>
 
-      {/* Right Side - Form */}
       <div className={styles.authFormSection}>
         <div className={styles.formContainer}>
           <div className={styles.formHeader}>
-            <h2>Welcome back</h2>
-            <p>Sign in to your account to continue</p>
+            <h2>{t('auth.login.welcomeBack')}</h2>
+            <p>{t('auth.login.signInToContinue')}</p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Email</label>
+              <label className={styles.formLabel}>{t('common.email')}</label>
               <div className={styles.inputWrapper}>
                 <Mail size={18} />
                 <input
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder={t('auth.placeholders.email')}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                   disabled={loading}
                   className={styles.formInput}
                   required
@@ -106,14 +103,14 @@ export function Login() {
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Password</label>
+              <label className={styles.formLabel}>{t('common.password')}</label>
               <div className={styles.inputWrapper}>
                 <Lock size={18} />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
+                  placeholder={t('auth.placeholders.password')}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(event) => setPassword(event.target.value)}
                   disabled={loading}
                   className={styles.formInput}
                   required
@@ -123,6 +120,7 @@ export function Login() {
                   onClick={() => setShowPassword(!showPassword)}
                   className={styles.togglePassword}
                   tabIndex={-1}
+                  aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -132,14 +130,14 @@ export function Login() {
             <div className={styles.formActions}>
               <label className={styles.checkbox}>
                 <input type="checkbox" />
-                <span>Remember me</span>
+                <span>{t('auth.login.rememberMe')}</span>
               </label>
               <Link to="/forgot-password" className={styles.forgotLink}>
-                Forgot password?
+                {t('auth.login.forgotPassword')}
               </Link>
             </div>
 
-            {error && <p className={styles.error}>{error}</p>}
+            {errorKey && <p className={styles.error}>{t(errorKey)}</p>}
 
             <Button
               variant="primary"
@@ -151,11 +149,11 @@ export function Login() {
               {loading ? (
                 <>
                   <span className={styles.loadingSpinner} />
-                  Signing in...
+                  {t('auth.login.signingIn')}
                 </>
               ) : (
                 <>
-                  Sign In
+                  {t('auth.login.signIn')}
                   <ArrowRight size={18} />
                 </>
               )}
@@ -163,7 +161,7 @@ export function Login() {
           </form>
 
           <div className={styles.formDivider}>
-            <span>or</span>
+            <span>{t('common.or')}</span>
           </div>
 
           <Button
@@ -174,20 +172,18 @@ export function Login() {
             className={styles.registrationButton}
             disabled={loading}
           >
-            I Have a Registration Key
+            {t('auth.login.haveRegistrationKey')}
           </Button>
 
           <p className={styles.signupText}>
-            Don&apos;t have an account?{' '}
+            {t('auth.login.noAccount')}{' '}
             <Link to="/signup" className={styles.signupLink}>
-              Create account
+              {t('auth.login.createAccount')}
             </Link>
           </p>
         </div>
 
-        <p className={styles.copyright}>
-          © {new Date().getFullYear()} MedStation. All rights reserved.
-        </p>
+        <p className={styles.copyright}>{t('auth.copyright', { year: new Date().getFullYear() })}</p>
       </div>
     </div>
   );

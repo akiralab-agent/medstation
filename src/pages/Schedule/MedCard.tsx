@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Header, Input, Button, Modal } from '../../components/ui';
 import { CreditCard, Check } from 'lucide-react';
 import styles from './MedCard.module.css';
@@ -17,6 +18,7 @@ interface CardData {
 
 export function MedCard() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [cardNumber, setCardNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [cardData, setCardData] = useState<CardData | null>(null);
@@ -25,18 +27,17 @@ export function MedCard() {
 
   const handleFetch = () => {
     setLoading(true);
-    // Simulated API call
     setTimeout(() => {
       setLoading(false);
       if (cardNumber.length >= 10) {
         setCardData({
-          cardNumber: cardNumber,
+          cardNumber,
           cardholder: 'Carlos Comet',
           email: 'carlos@gmail.com',
           phone: '11111111111',
           address: '1343 Saint Tropez Circle, Broward...',
-          cardStatus: 'ACTIVE',
-          personStatus: 'ACTIVE',
+          cardStatus: t('common.active').toUpperCase(),
+          personStatus: t('common.active').toUpperCase(),
           subscription: 'stripe_error',
         });
       } else {
@@ -49,7 +50,7 @@ export function MedCard() {
     navigate('/schedule/payment', { state: { serviceType: 'medcard' } });
   };
 
-  const handleContratarMedCard = () => {
+  const handleHireMedCard = () => {
     setShowExternalModal(true);
   };
 
@@ -61,11 +62,11 @@ export function MedCard() {
         {!cardData ? (
           <>
             <div className={styles.inputSection}>
-              <label className={styles.label}>CARD NUMBER</label>
+              <label className={styles.label}>{t('medcard.cardNumber').toUpperCase()}</label>
               <Input
-                placeholder="Enter your card number"
+                placeholder={t('medcard.enterCardNumber')}
                 value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value)}
+                onChange={(event) => setCardNumber(event.target.value)}
                 leftIcon={<CreditCard size={20} />}
               />
             </div>
@@ -77,11 +78,11 @@ export function MedCard() {
                 onClick={handleFetch}
                 disabled={!cardNumber || loading}
               >
-                {loading ? 'Loading...' : 'Fetch Card'}
+                {loading ? t('common.loading') : t('medcard.fetchCard')}
               </Button>
 
-              <Button variant="secondary" fullWidth onClick={handleContratarMedCard}>
-                Contratar MedCard
+              <Button variant="secondary" fullWidth onClick={handleHireMedCard}>
+                {t('medcard.hireMedcard')}
               </Button>
             </div>
           </>
@@ -89,55 +90,55 @@ export function MedCard() {
           <div className={styles.cardFound}>
             <div className={styles.successHeader}>
               <Check size={24} />
-              <span>Card Found</span>
+              <span>{t('medcard.cardFound')}</span>
             </div>
 
             <div className={styles.cardDetails}>
               <div className={styles.field}>
-                <span className={styles.fieldLabel}>Card Number</span>
+                <span className={styles.fieldLabel}>{t('medcard.cardNumber')}</span>
                 <span className={styles.fieldValue}>{cardData.cardNumber}</span>
               </div>
 
               <div className={styles.field}>
-                <span className={styles.fieldLabel}>Cardholder</span>
+                <span className={styles.fieldLabel}>{t('medcard.cardholder')}</span>
                 <span className={styles.fieldValue}>{cardData.cardholder}</span>
               </div>
 
               <div className={styles.field}>
-                <span className={styles.fieldLabel}>Email</span>
+                <span className={styles.fieldLabel}>{t('common.email')}</span>
                 <span className={styles.fieldValue}>{cardData.email}</span>
               </div>
 
               <div className={styles.field}>
-                <span className={styles.fieldLabel}>Phone</span>
+                <span className={styles.fieldLabel}>{t('common.phone')}</span>
                 <span className={styles.fieldValue}>{cardData.phone}</span>
               </div>
 
               <div className={styles.field}>
-                <span className={styles.fieldLabel}>Address</span>
+                <span className={styles.fieldLabel}>{t('common.address')}</span>
                 <span className={styles.fieldValue}>{cardData.address}</span>
               </div>
 
               <div className={styles.divider} />
 
               <div className={styles.field}>
-                <span className={styles.fieldLabel}>Card Status</span>
+                <span className={styles.fieldLabel}>{t('medcard.cardStatus')}</span>
                 <span className={`${styles.fieldValue} ${styles.status}`}>{cardData.cardStatus}</span>
               </div>
 
               <div className={styles.field}>
-                <span className={styles.fieldLabel}>Person Status</span>
+                <span className={styles.fieldLabel}>{t('medcard.personStatus')}</span>
                 <span className={`${styles.fieldValue} ${styles.status}`}>{cardData.personStatus}</span>
               </div>
 
               <div className={styles.field}>
-                <span className={styles.fieldLabel}>Subscription</span>
+                <span className={styles.fieldLabel}>{t('medcard.subscription')}</span>
                 <span className={styles.fieldValue}>{cardData.subscription}</span>
               </div>
             </div>
 
             <Button variant="success" fullWidth onClick={handleContinue}>
-              Continue to Payment
+              {t('medcard.continueToPayment')}
             </Button>
           </div>
         )}
@@ -147,25 +148,24 @@ export function MedCard() {
         visible={showError}
         onClose={() => setShowError(false)}
         type="error"
-        title="Card Not Found"
-        message="The card number you entered was not found. Please check and try again."
-        primaryAction={{ label: 'Try Again', onClick: () => setShowError(false) }}
+        title={t('medcard.cardNotFound')}
+        message={t('medcard.cardNotFoundMessage')}
+        primaryAction={{ label: t('medcard.tryAgain'), onClick: () => setShowError(false) }}
       />
 
       <Modal
         visible={showExternalModal}
         onClose={() => setShowExternalModal(false)}
         type="warning"
-        title="ATTENTION"
-        message="You will be taken to a partner site to register for MedCard."
+        title={t('common.attention')}
+        message={t('medcard.externalSiteMessage')}
         primaryAction={{
-          label: 'Continue',
+          label: t('common.continue'),
           onClick: () => {
             setShowExternalModal(false);
-            // In real app, would open external link
           },
         }}
-        secondaryAction={{ label: 'Cancel', onClick: () => setShowExternalModal(false) }}
+        secondaryAction={{ label: t('common.cancel'), onClick: () => setShowExternalModal(false) }}
       />
     </div>
   );

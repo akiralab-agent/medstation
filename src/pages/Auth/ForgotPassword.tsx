@@ -1,28 +1,29 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  Mail, 
-  HeartPulse, 
+import { useTranslation } from 'react-i18next';
+import {
+  Mail,
+  HeartPulse,
   ArrowRight,
   Shield,
   Clock,
   FileText,
-  CheckCircle2
+  CheckCircle2,
 } from 'lucide-react';
 import { Button, Modal } from '../../components/ui';
 import styles from './Auth.module.css';
 
 export function ForgotPassword() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setLoading(true);
 
-    // Simulated API call
     setTimeout(() => {
       setLoading(false);
       setShowSuccess(true);
@@ -31,7 +32,6 @@ export function ForgotPassword() {
 
   return (
     <div className={styles.authPage}>
-      {/* Left Side - Branding */}
       <div className={styles.authBrand}>
         <div className={styles.brandContent}>
           <div className={styles.brandLogo}>
@@ -39,59 +39,53 @@ export function ForgotPassword() {
             <span>medstation</span>
           </div>
           <h1 className={styles.brandTitle}>
-            Reset Your<br />
-            <span>Password</span>
+            {t('auth.forgotPassword.brandTitleLine1')}<br />
+            <span>{t('auth.forgotPassword.brandTitleLine2')}</span>
           </h1>
-          <p className={styles.brandDescription}>
-            Don&apos;t worry, we&apos;ve got you covered. Enter your email and we&apos;ll 
-            send you instructions to get back into your account.
-          </p>
-          
+          <p className={styles.brandDescription}>{t('auth.forgotPassword.brandDescription')}</p>
+
           <div className={styles.features}>
             <div className={styles.feature}>
               <Shield size={24} />
-              <span>Secure & Private</span>
+              <span>{t('auth.featureSecure')}</span>
             </div>
             <div className={styles.feature}>
               <Clock size={24} />
-              <span>24/7 Access</span>
+              <span>{t('auth.featureAccess')}</span>
             </div>
             <div className={styles.feature}>
               <FileText size={24} />
-              <span>Digital Records</span>
+              <span>{t('auth.featureRecords')}</span>
             </div>
           </div>
         </div>
-        
+
         <div className={styles.brandPattern} />
       </div>
 
-      {/* Right Side - Form */}
       <div className={styles.authFormSection}>
         <div className={styles.formContainer}>
-          {/* Back Link */}
           <Link to="/login" className={styles.backLink}>
             <ArrowRight size={16} style={{ transform: 'rotate(180deg)' }} />
-            Back to login
+            {t('auth.backToLogin')}
           </Link>
 
           <div className={styles.formHeader}>
-            <h2>Forgot Password?</h2>
-            <p>No worries, we&apos;ll send you reset instructions</p>
+            <h2>{t('auth.forgotPassword.title')}</h2>
+            <p>{t('auth.forgotPassword.subtitle')}</p>
           </div>
 
           {!showSuccess ? (
             <form className={styles.form} onSubmit={handleSubmit}>
-              {/* Email Input */}
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Email Address</label>
+                <label className={styles.formLabel}>{t('auth.forgotPassword.emailAddress')}</label>
                 <div className={styles.inputWrapper}>
                   <Mail size={18} />
                   <input
                     type="email"
-                    placeholder="name@example.com"
+                    placeholder={t('auth.placeholders.email')}
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(event) => setEmail(event.target.value)}
                     disabled={loading}
                     className={styles.formInput}
                     required
@@ -109,20 +103,20 @@ export function ForgotPassword() {
                 {loading ? (
                   <>
                     <span className={styles.loadingSpinner} />
-                    Sending...
+                    {t('auth.forgotPassword.sending')}
                   </>
                 ) : (
                   <>
-                    Send Reset Link
+                    {t('auth.forgotPassword.sendResetLink')}
                     <ArrowRight size={18} />
                   </>
                 )}
               </Button>
 
               <p className={styles.signupText}>
-                Remember your password?{' '}
+                {t('auth.forgotPassword.rememberPassword')}{' '}
                 <Link to="/login" className={styles.signupLink}>
-                  Sign in
+                  {t('auth.login.signIn')}
                 </Link>
               </p>
             </form>
@@ -131,17 +125,17 @@ export function ForgotPassword() {
               <div className={styles.successIcon}>
                 <CheckCircle2 size={48} />
               </div>
-              <h3 className={styles.successTitle}>Check your email</h3>
+              <h3 className={styles.successTitle}>{t('auth.forgotPassword.checkEmail')}</h3>
               <p className={styles.successText}>
-                We&apos;ve sent a password reset link to <strong>{email}</strong>
+                {t('auth.forgotPassword.sentTo')} <strong>{email}</strong>
               </p>
               <p className={styles.successSubtext}>
-                Didn&apos;t receive the email? Check your spam folder or{' '}
-                <button 
+                {t('auth.forgotPassword.didNotReceive')}{' '}
+                <button
                   className={styles.resendLink}
                   onClick={() => setShowSuccess(false)}
                 >
-                  try again
+                  {t('auth.forgotPassword.tryAgain')}
                 </button>
               </p>
               <Button
@@ -151,18 +145,15 @@ export function ForgotPassword() {
                 className={styles.submitButton}
                 style={{ marginTop: '24px' }}
               >
-                Back to Login
+                {t('auth.forgotPassword.backToLogin')}
               </Button>
             </div>
           )}
         </div>
 
-        <p className={styles.copyright}>
-          © {new Date().getFullYear()} MedStation. All rights reserved.
-        </p>
+        <p className={styles.copyright}>{t('auth.copyright', { year: new Date().getFullYear() })}</p>
       </div>
 
-      {/* Success Modal (kept for backward compatibility) */}
       <Modal
         visible={false}
         onClose={() => {}}

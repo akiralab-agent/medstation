@@ -1,49 +1,30 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Header, Tabs } from '../../components/ui';
 import styles from './Exams.module.css';
 
-const tabs = [
-  { id: 'report', label: 'Report' },
-  { id: 'images', label: 'Images' },
-  { id: 'historical', label: 'Historical' },
-];
-
 export function ExamDetail() {
   const { id } = useParams();
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('report');
-
-  // Mock data
+  const tabs = [
+    { id: 'report', label: t('exams.reportTab') },
+    { id: 'images', label: t('exams.imagesTab') },
+    { id: 'historical', label: t('exams.historicalTab') },
+  ];
+  const formatDate = (date: string) =>
+    new Date(date).toLocaleDateString(i18n.language, {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+    });
   const exam = {
     id,
-    name: 'Complete Blood Count',
+    name: t('exams.mock.completeBloodCount'),
     doctor: 'Dr. Sarah Johnson',
-    date: 'Jan 05, 2026',
-    report: `
-COMPLETE BLOOD COUNT (CBC)
-
-Patient: John Doe
-Date of Collection: January 5, 2026
-Lab: Miami Medical Laboratory
-
-RESULTS:
-
-White Blood Cells (WBC): 7.2 x10^9/L (Normal: 4.5-11.0)
-Red Blood Cells (RBC): 4.8 x10^12/L (Normal: 4.5-5.5)
-Hemoglobin (Hgb): 14.5 g/dL (Normal: 13.5-17.5)
-Hematocrit (Hct): 42% (Normal: 38-50%)
-Platelets: 250 x10^9/L (Normal: 150-400)
-
-INTERPRETATION:
-All values within normal range. No abnormalities detected.
-
-RECOMMENDATIONS:
-Continue routine monitoring as scheduled.
-
-Electronically signed by:
-Dr. Sarah Johnson, MD
-License #: FL12345
-    `.trim(),
+    date: formatDate('2026-01-05'),
+    report: t('exams.reportBody'),
   };
 
   return (
@@ -51,7 +32,7 @@ License #: FL12345
       <Header title={exam.name} showBackButton variant="primary" />
 
       <div className={styles.examHeader}>
-        <p className={styles.examInfo}>{exam.doctor} • {exam.date}</p>
+        <p className={styles.examInfo}>{exam.doctor} | {exam.date}</p>
       </div>
 
       <div className={styles.tabsWrapper}>
@@ -72,7 +53,7 @@ License #: FL12345
                 <div className={styles.line1} />
                 <div className={styles.line2} />
               </div>
-              <p>No images available</p>
+              <p>{t('exams.noImagesAvailable')}</p>
             </div>
           </div>
         )}
@@ -80,16 +61,16 @@ License #: FL12345
         {activeTab === 'historical' && (
           <div className={styles.historicalContent}>
             <div className={styles.historyItem}>
-              <span className={styles.historyDate}>Jan 05, 2026</span>
-              <span className={styles.historyValue}>Current Result</span>
+              <span className={styles.historyDate}>{formatDate('2026-01-05')}</span>
+              <span className={styles.historyValue}>{t('exams.currentResult')}</span>
             </div>
             <div className={styles.historyItem}>
-              <span className={styles.historyDate}>Jul 15, 2025</span>
-              <span className={styles.historyValue}>Previous Result</span>
+              <span className={styles.historyDate}>{formatDate('2025-07-15')}</span>
+              <span className={styles.historyValue}>{t('exams.previousResult')}</span>
             </div>
             <div className={styles.historyItem}>
-              <span className={styles.historyDate}>Jan 10, 2025</span>
-              <span className={styles.historyValue}>Earlier Result</span>
+              <span className={styles.historyDate}>{formatDate('2025-01-10')}</span>
+              <span className={styles.historyValue}>{t('exams.earlierResult')}</span>
             </div>
           </div>
         )}

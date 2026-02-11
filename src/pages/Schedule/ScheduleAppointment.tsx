@@ -1,18 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Search, MapPin, Plus } from 'lucide-react';
 import { Header, Tabs, Button, Input } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
 import { fetchLocations, type LocationItem } from '../../services/locations';
 import styles from './Schedule.module.css';
 
-const tabs = [
-  { id: 'inperson', label: 'In-person' },
-  { id: 'telemedicine', label: 'Telemedicine' },
-];
-
 export function ScheduleAppointment() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const telehealthLocationId = import.meta.env.VITE_TELEHEALTH_LOCATION_ID?.trim() ?? '';
   const normalizedTelehealthLocationId = telehealthLocationId.toLowerCase();
@@ -23,6 +20,18 @@ export function ScheduleAppointment() {
   const [locations, setLocations] = useState<LocationItem[]>([]);
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [locationsError, setLocationsError] = useState<string | null>(null);
+  const tabs = [
+    { id: 'inperson', label: t('schedule.inPerson') },
+    { id: 'telemedicine', label: t('schedule.telemedicine') },
+  ];
+  const specialtyOptions = [
+    { value: 'cardiology', label: t('schedule.specialtyCardiology') },
+    { value: 'dermatology', label: t('schedule.specialtyDermatology') },
+    { value: 'general', label: t('schedule.specialtyGeneralPractice') },
+    { value: 'neurology', label: t('schedule.specialtyNeurology') },
+    { value: 'orthopedics', label: t('schedule.specialtyOrthopedics') },
+    { value: 'pediatrics', label: t('schedule.specialtyPediatrics') },
+  ];
   const inPersonLocations = locations.filter(
     (item) => item.id.trim().toLowerCase() !== normalizedTelehealthLocationId
   );
@@ -45,7 +54,7 @@ export function ScheduleAppointment() {
           return;
         }
         setLocations([]);
-        setLocationsError('Unable to load locations. You can type the location manually.');
+        setLocationsError(t('schedule.locationsLoadError'));
       } finally {
         if (isMounted) {
           setIsLoadingLocations(false);
@@ -58,7 +67,7 @@ export function ScheduleAppointment() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (activeTab !== 'inperson') {
@@ -83,7 +92,7 @@ export function ScheduleAppointment() {
       ? telehealthLocationId
       : (selectedLocationOption?.id ?? '');
     const selectedLocationName = activeTab === 'telemedicine'
-      ? (telehealthLocationOption?.name ?? 'Telehealth')
+      ? (telehealthLocationOption?.name ?? t('schedule.telemedicine'))
       : (selectedLocationOption?.name ?? location);
 
     navigate('/schedule/choose', {
@@ -98,19 +107,19 @@ export function ScheduleAppointment() {
 
   return (
     <div className={styles.container}>
-      <Header title="Schedule Appointment" showBackButton variant="primary" />
+      <Header title={t('schedule.scheduleAppointment')} showBackButton variant="primary" />
 
       <div className={styles.patientSelector}>
         <div className={styles.patientInfo}>
           <div className={styles.avatar}>
-            {user?.name?.split(' ').map((n) => n[0]).join('').slice(0, 2) || 'U'}
+            {user?.name?.split(' ').map((namePart) => namePart[0]).join('').slice(0, 2) || 'U'}
           </div>
           <div className={styles.patientDetails}>
-            <span className={styles.patientLabel}>Patient</span>
-            <span className={styles.patientName}>{user?.name || 'Select patient'}</span>
+            <span className={styles.patientLabel}>{t('appointments.patient')}</span>
+            <span className={styles.patientName}>{user?.name || t('schedule.selectPatient')}</span>
           </div>
         </div>
-        <button className={styles.addButton}>
+        <button className={styles.addButton} aria-label={t('common.add')}>
           <Plus size={20} />
         </button>
       </div>
@@ -121,21 +130,20 @@ export function ScheduleAppointment() {
         <div className={styles.form}>
           {showSpecialtySelector && (
             <div className={styles.field}>
-              <label className={styles.label}>What are you looking for?</label>
+              <label className={styles.label}>{t('schedule.whatAreYouLookingFor')}</label>
               <div className={styles.selectWrapper}>
                 <Search size={20} className={styles.selectIcon} />
                 <select
                   className={styles.select}
                   value={specialty}
-                  onChange={(e) => setSpecialty(e.target.value)}
+                  onChange={(event) => setSpecialty(event.target.value)}
                 >
-                  <option value="">Select a specialty</option>
-                  <option value="cardiology">Cardiology</option>
-                  <option value="dermatology">Dermatology</option>
-                  <option value="general">General Practice</option>
-                  <option value="neurology">Neurology</option>
-                  <option value="orthopedics">Orthopedics</option>
-                  <option value="pediatrics">Pediatrics</option>
+                  <option value="">{t('schedule.selectSpecialty')}</option>
+                  {specialtyOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -143,18 +151,18 @@ export function ScheduleAppointment() {
 
           {activeTab !== 'telemedicine' && (
             <div className={styles.field}>
-              <label className={styles.label}>Location</label>
+              <label className={styles.label}>{t('common.location')}</label>
               {locations.length > 0 || isLoadingLocations ? (
                 <div className={styles.selectWrapper}>
                   <MapPin size={20} className={styles.selectIcon} />
                   <select
                     className={styles.select}
                     value={location}
-                    onChange={(e) => setLocation(e.target.value)}
+                    onChange={(event) => setLocation(event.target.value)}
                     disabled={isLoadingLocations}
                   >
                     <option value="">
-                      {isLoadingLocations ? 'Loading locations...' : 'Select a location'}
+                      {isLoadingLocations ? t('schedule.loadingLocations') : t('schedule.selectLocation')}
                     </option>
                     {inPersonLocations.map((item) => (
                       <option key={item.id} value={item.id}>
@@ -167,9 +175,9 @@ export function ScheduleAppointment() {
                 <div className={styles.inputWrapper}>
                   <MapPin size={20} className={styles.inputIcon} />
                   <Input
-                    placeholder="Type location"
+                    placeholder={t('schedule.typeLocation')}
                     value={location}
-                    onChange={(e) => setLocation(e.target.value)}
+                    onChange={(event) => setLocation(event.target.value)}
                   />
                 </div>
               )}
@@ -183,7 +191,7 @@ export function ScheduleAppointment() {
             onClick={handleSearch}
             disabled={showSpecialtySelector && !specialty}
           >
-            SEARCH SCHEDULES
+            {t('schedule.searchSchedules')}
           </Button>
         </div>
       </div>

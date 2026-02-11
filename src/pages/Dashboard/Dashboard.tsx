@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   FileText,
   Calendar,
@@ -9,7 +10,7 @@ import {
   Clock,
   ChevronRight,
   User,
-  Shield
+  Shield,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { fetchAppointmentsByPerson, type AppointmentItem } from '../../services/appointments';
@@ -25,58 +26,59 @@ interface QuickAction {
   color: string;
 }
 
-const quickActions: QuickAction[] = [
-  { 
-    id: 'exams', 
-    icon: FileText, 
-    label: 'Exam Results', 
-    description: 'View your lab results',
-    path: '/exams',
-    color: 'primary'
-  },
-  { 
-    id: 'profile', 
-    icon: User, 
-    label: 'My Profile', 
-    description: 'View your information',
-    path: '/profile',
-    color: 'primary'
-  },
-  { 
-    id: 'schedule', 
-    icon: Calendar, 
-    label: 'My Appointments', 
-    description: 'Manage your visits',
-    path: '/appointments',
-    color: 'primary'
-  },
-  { 
-    id: 'newSchedule', 
-    icon: CalendarPlus, 
-    label: 'Book Appointment', 
-    description: 'Schedule a new visit',
-    path: '/schedule/new',
-    color: 'primary'
-  },
-];
-
-function formatTime(dateString?: string) {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-}
-
-const recentActivity = [
-  { id: '1', text: 'Blood test results uploaded', time: '2 hours ago', icon: FileText },
-  { id: '2', text: 'Appointment confirmed with Dr. Johnson', time: '5 hours ago', icon: Calendar },
-  { id: '3', text: 'Prescription renewed', time: '1 day ago', icon: Activity },
-];
-
 export function Dashboard() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [upcomingAppointments, setUpcomingAppointments] = useState<AppointmentItem[]>([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
+  const quickActions: QuickAction[] = [
+    {
+      id: 'exams',
+      icon: FileText,
+      label: t('dashboard.quickActionExamResultsLabel'),
+      description: t('dashboard.quickActionExamResultsDescription'),
+      path: '/exams',
+      color: 'primary',
+    },
+    {
+      id: 'profile',
+      icon: User,
+      label: t('dashboard.quickActionProfileLabel'),
+      description: t('dashboard.quickActionProfileDescription'),
+      path: '/profile',
+      color: 'primary',
+    },
+    {
+      id: 'schedule',
+      icon: Calendar,
+      label: t('dashboard.quickActionAppointmentsLabel'),
+      description: t('dashboard.quickActionAppointmentsDescription'),
+      path: '/appointments',
+      color: 'primary',
+    },
+    {
+      id: 'newSchedule',
+      icon: CalendarPlus,
+      label: t('dashboard.quickActionBookLabel'),
+      description: t('dashboard.quickActionBookDescription'),
+      path: '/schedule/new',
+      color: 'primary',
+    },
+  ];
+  const recentActivity = [
+    { id: '1', text: t('dashboard.activityBloodTest'), time: t('dashboard.activityTime2Hours'), icon: FileText },
+    { id: '2', text: t('dashboard.activityAppointment'), time: t('dashboard.activityTime5Hours'), icon: Calendar },
+    { id: '3', text: t('dashboard.activityPrescription'), time: t('dashboard.activityTime1Day'), icon: Activity },
+  ];
+
+  const formatTime = (dateString?: string) => {
+    if (!dateString) {
+      return '';
+    }
+    const date = new Date(dateString);
+    return date.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+  };
 
   useEffect(() => {
     const personId = import.meta.env.VITE_PERSON_ID?.trim();
@@ -89,7 +91,7 @@ export function Dashboard() {
       .then((items) => {
         const now = new Date();
         const upcoming = items
-          .filter((apt) => apt.appointmentDateTime && new Date(apt.appointmentDateTime) >= now)
+          .filter((appointment) => appointment.appointmentDateTime && new Date(appointment.appointmentDateTime) >= now)
           .sort((a, b) => (a.appointmentDateTime ?? '').localeCompare(b.appointmentDateTime ?? ''));
         setUpcomingAppointments(upcoming.slice(0, 3));
       })
@@ -99,32 +101,30 @@ export function Dashboard() {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) {
+      return t('dashboard.goodMorning');
+    }
+    if (hour < 18) {
+      return t('dashboard.goodAfternoon');
+    }
+    return t('dashboard.goodEvening');
   };
 
   return (
     <div className={styles.dashboard}>
       <div className="container">
-        {/* Header */}
         <div className={styles.header}>
           <div className={styles.greeting}>
             <h1 className={styles.greetingText}>
-              {getGreeting()}, <span>{user?.name?.split(' ')[0] || 'User'}</span>
+              {getGreeting()}, <span>{user?.name?.split(' ')[0] || t('common.user')}</span>
             </h1>
-            <p className={styles.greetingSubtext}>
-              Here&apos;s what&apos;s happening with your health today
-            </p>
+            <p className={styles.greetingSubtext}>{t('dashboard.greetingSubtext')}</p>
           </div>
-
         </div>
 
-        {/* Main Grid */}
         <div className={styles.mainGrid}>
-          {/* Quick Actions */}
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Quick Actions</h2>
+            <h2 className={styles.sectionTitle}>{t('dashboard.quickActions')}</h2>
             <div className={styles.actionsGrid}>
               {quickActions.map((action) => {
                 const Icon = action.icon;
@@ -151,43 +151,45 @@ export function Dashboard() {
             </div>
           </section>
 
-          {/* Upcoming Appointments */}
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Upcoming Appointments</h2>
+              <h2 className={styles.sectionTitle}>{t('dashboard.upcomingAppointments')}</h2>
               <button className={styles.viewAllBtn} onClick={() => navigate('/appointments')}>
-                View all
+                {t('common.viewAll')}
               </button>
             </div>
             <div className={styles.appointmentsList}>
               {loadingAppointments ? (
-                <p style={{ color: 'var(--color-neutral-500)', fontSize: 'var(--font-sm)' }}>Loading...</p>
+                <p style={{ color: 'var(--color-neutral-500)', fontSize: 'var(--font-sm)' }}>{t('common.loading')}</p>
               ) : upcomingAppointments.length === 0 ? (
-                <p style={{ color: 'var(--color-neutral-500)', fontSize: 'var(--font-sm)' }}>No upcoming appointments</p>
+                <p style={{ color: 'var(--color-neutral-500)', fontSize: 'var(--font-sm)' }}>{t('appointments.noUpcomingAppointments')}</p>
               ) : (
-                upcomingAppointments.map((apt) => {
-                  const dt = apt.appointmentDateTime ? new Date(apt.appointmentDateTime) : null;
+                upcomingAppointments.map((appointment) => {
+                  const dateTime = appointment.appointmentDateTime ? new Date(appointment.appointmentDateTime) : null;
                   return (
-                    <div key={apt.id} className={styles.appointmentItem} onClick={() => navigate(`/appointments/${apt.id}`)} style={{ cursor: 'pointer' }}>
+                    <div
+                      key={appointment.id}
+                      className={styles.appointmentItem}
+                      onClick={() => navigate(`/appointments/${appointment.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className={styles.appointmentDate}>
-                        <span className={styles.dateDay}>
-                          {dt?.getDate() ?? '—'}
-                        </span>
+                        <span className={styles.dateDay}>{dateTime?.getDate() ?? '-'}</span>
                         <span className={styles.dateMonth}>
-                          {dt?.toLocaleString('default', { month: 'short' }).toUpperCase() ?? ''}
+                          {dateTime?.toLocaleString(i18n.language, { month: 'short' }).toUpperCase() ?? ''}
                         </span>
                       </div>
                       <div className={styles.appointmentDetails}>
-                        <h3 className={styles.doctorName}>{apt.resourceName || 'Provider'}</h3>
-                        <p className={styles.specialty}>{apt.eventName || ''}</p>
+                        <h3 className={styles.doctorName}>{appointment.resourceName || t('appointments.provider')}</h3>
+                        <p className={styles.specialty}>{appointment.eventName || ''}</p>
                         <div className={styles.appointmentMeta}>
                           <span className={styles.metaItem}>
                             <Clock size={14} />
-                            {formatTime(apt.appointmentDateTime)}
+                            {formatTime(appointment.appointmentDateTime)}
                           </span>
                           <span className={styles.metaItem}>
                             <Shield size={14} />
-                            {apt.locationName || ''}
+                            {appointment.locationName || ''}
                           </span>
                         </div>
                       </div>
@@ -199,46 +201,43 @@ export function Dashboard() {
           </section>
         </div>
 
-        {/* Secondary Grid */}
         <div className={styles.secondaryGrid}>
-          {/* Health Overview */}
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Health Overview</h2>
+            <h2 className={styles.sectionTitle}>{t('dashboard.healthOverview')}</h2>
             <div className={styles.healthCard}>
               <div className={styles.healthScore}>
                 <div className={styles.scoreCircle}>
                   <span className={styles.scoreValue}>94</span>
-                  <span className={styles.scoreLabel}>Score</span>
+                  <span className={styles.scoreLabel}>{t('dashboard.score')}</span>
                 </div>
                 <div className={styles.scoreInfo}>
-                  <p className={styles.scoreTitle}>Excellent</p>
-                  <p className={styles.scoreDesc}>Your health is in great shape!</p>
+                  <p className={styles.scoreTitle}>{t('dashboard.excellent')}</p>
+                  <p className={styles.scoreDesc}>{t('dashboard.healthGreatShape')}</p>
                   <div className={styles.scoreTrend}>
                     <TrendingUp size={16} />
-                    <span>+5% from last month</span>
+                    <span>{t('dashboard.trendFromLastMonth')}</span>
                   </div>
                 </div>
               </div>
               <div className={styles.healthMetrics}>
                 <div className={styles.metric}>
                   <span className={styles.metricValue}>72 kg</span>
-                  <span className={styles.metricLabel}>Weight</span>
+                  <span className={styles.metricLabel}>{t('health.weight')}</span>
                 </div>
                 <div className={styles.metric}>
                   <span className={styles.metricValue}>120/80</span>
-                  <span className={styles.metricLabel}>Blood Pressure</span>
+                  <span className={styles.metricLabel}>{t('health.bloodPressure')}</span>
                 </div>
                 <div className={styles.metric}>
                   <span className={styles.metricValue}>72 bpm</span>
-                  <span className={styles.metricLabel}>Heart Rate</span>
+                  <span className={styles.metricLabel}>{t('health.heartRate')}</span>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* Recent Activity */}
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Recent Activity</h2>
+            <h2 className={styles.sectionTitle}>{t('dashboard.recentActivity')}</h2>
             <div className={styles.activityList}>
               {recentActivity.map((activity) => {
                 const Icon = activity.icon;

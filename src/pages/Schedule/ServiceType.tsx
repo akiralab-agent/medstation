@@ -1,16 +1,17 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { User, Building2, CreditCard } from 'lucide-react';
 import { Header } from '../../components/ui';
 import styles from './Schedule.module.css';
 
-const serviceTypes = [
-  { id: 'particular', icon: User, label: 'PARTICULAR' },
-  { id: 'insurance', icon: Building2, label: 'HEALTH INSURANCE' },
-  { id: 'medcard', icon: CreditCard, label: 'MEDCARD' },
-];
-
 export function ServiceType() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const serviceTypes = [
+    { id: 'particular', icon: User, label: t('schedule.serviceTypeParticular') },
+    { id: 'insurance', icon: Building2, label: t('schedule.serviceTypeInsurance') },
+    { id: 'medcard', icon: CreditCard, label: 'MEDCARD' },
+  ];
 
   const handleSelect = (type: string) => {
     if (type === 'medcard') {
@@ -22,7 +23,7 @@ export function ServiceType() {
 
   return (
     <div className={styles.container}>
-      <Header title="Type of Service" showBackButton variant="primary" />
+      <Header title={t('schedule.serviceTypeTitle')} showBackButton variant="primary" />
 
       <div className={styles.serviceCards}>
         {serviceTypes.map((service) => {

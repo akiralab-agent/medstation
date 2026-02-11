@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   LayoutDashboard, 
   CalendarClock, 
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { NotificationDropdown } from './NotificationDropdown';
+import { LanguageSelector } from './LanguageSelector';
 import styles from './Navbar.module.css';
 
 interface NavItem {
@@ -22,21 +24,21 @@ interface NavItem {
   path: string;
 }
 
-const navItems: NavItem[] = [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { id: 'appointments', icon: CalendarClock, label: 'Appointments', path: '/appointments' },
-  { id: 'health', icon: Heart, label: 'Health', path: '/health' },
-  { id: 'exams', icon: Shield, label: 'Exams', path: '/exams' },
-];
-
 export function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const { logout, user } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const notificationBtnRef = useRef<HTMLButtonElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const navItems: NavItem[] = [
+    { id: 'dashboard', icon: LayoutDashboard, label: t('nav.dashboard'), path: '/dashboard' },
+    { id: 'appointments', icon: CalendarClock, label: t('nav.appointments'), path: '/appointments' },
+    { id: 'health', icon: Heart, label: t('nav.health'), path: '/health' },
+    { id: 'exams', icon: Shield, label: t('nav.exams'), path: '/exams' },
+  ];
 
   const notificationCount = 3; // Mock data
 
@@ -107,7 +109,7 @@ export function Navbar() {
                 e.stopPropagation();
                 setNotificationOpen((prev) => !prev);
               }}
-              aria-label="Notifications"
+              aria-label={t('notifications.title')}
               aria-expanded={notificationOpen}
             >
               <Bell size={20} />
@@ -124,6 +126,8 @@ export function Navbar() {
             />
           </div>
 
+          <LanguageSelector />
+
           {/* User Menu */}
           <div className={styles.userMenuWrapper} ref={userMenuRef}>
             <button 
@@ -131,23 +135,23 @@ export function Navbar() {
               onClick={() => setUserMenuOpen(!userMenuOpen)}
             >
               <div className={styles.avatar}>{userInitials}</div>
-              <span className={styles.userName}>{user?.name || 'User'}</span>
+              <span className={styles.userName}>{user?.name || t('common.user')}</span>
               <ChevronDown size={16} />
             </button>
 
             <div className={`${styles.dropdown} ${userMenuOpen ? styles.dropdownOpen : ''}`}>
               <Link to="/profile" className={styles.dropdownItem} onClick={() => setUserMenuOpen(false)}>
                 <User size={18} />
-                Profile
+                {t('profile.title')}
               </Link>
               <Link to="/profile/settings" className={styles.dropdownItem} onClick={() => setUserMenuOpen(false)}>
                 <Settings size={18} />
-                Settings
+                {t('common.settings')}
               </Link>
               <div className={styles.dropdownDivider} />
               <button className={styles.dropdownItem} onClick={handleLogout}>
                 <LogOut size={18} />
-                Sign Out
+                {t('common.signOut')}
               </button>
             </div>
           </div>

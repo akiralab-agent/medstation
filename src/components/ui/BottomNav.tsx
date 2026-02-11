@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Smartphone, CalendarClock, Heart, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from './Badge';
 import styles from './BottomNav.module.css';
 
@@ -11,13 +12,6 @@ interface NavItem {
   badge?: number;
 }
 
-const navItems: NavItem[] = [
-  { id: 'home', icon: Smartphone, label: 'Home', path: '/dashboard' },
-  { id: 'schedule', icon: CalendarClock, label: 'Schedule', path: '/schedule' },
-  { id: 'health', icon: Heart, label: 'Health', path: '/health' },
-  { id: 'profile', icon: User, label: 'Profile', path: '/profile' },
-];
-
 interface BottomNavProps {
   notificationCount?: number;
 }
@@ -25,6 +19,13 @@ interface BottomNavProps {
 export function BottomNav({ notificationCount = 0 }: BottomNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const navItems: NavItem[] = [
+    { id: 'home', icon: Smartphone, label: t('nav.home'), path: '/dashboard' },
+    { id: 'schedule', icon: CalendarClock, label: t('nav.schedule'), path: '/schedule' },
+    { id: 'health', icon: Heart, label: t('nav.health'), path: '/health' },
+    { id: 'profile', icon: User, label: t('profile.title'), path: '/profile' },
+  ];
 
   const isActive = (path: string) => location.pathname.startsWith(path);
 

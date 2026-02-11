@@ -10,5 +10,6 @@ export { ListItem } from './ListItem';
 export { FAB } from './FAB';
 export { BottomNav } from './BottomNav';
 export { Navbar } from './Navbar';
+export { LanguageSelector } from './LanguageSelector';
 export { Footer } from './Footer';
 export { NotificationDropdown } from './NotificationDropdown';

@@ -1,65 +1,23 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Header, Card, Button } from '../../components/ui';
 import styles from './Notifications.module.css';
+
+interface NotificationAction {
+  labelKey: string;
+  variant: 'success' | 'text' | 'secondary';
+  action: string;
+}
 
 interface Notification {
   id: string;
   type: 'booking' | 'appointment' | 'exam' | 'canceled' | 'warning';
-  title: string;
-  description: string;
-  date: string;
-  actions?: { label: string; variant: 'success' | 'text' | 'secondary'; action: string }[];
+  titleKey: string;
+  descriptionKey: string;
+  date: Date;
+  actions?: NotificationAction[];
 }
-
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'booking',
-    title: 'Finish your booking',
-    description: "You're almost there! Complete your appointment booking now.",
-    date: 'Jan - 6 - 2026 - 02:00 PM',
-    actions: [
-      { label: 'Cancel appointment', variant: 'text', action: 'cancel' },
-      { label: 'Finish now', variant: 'success', action: 'finish' },
-    ],
-  },
-  {
-    id: '2',
-    type: 'appointment',
-    title: 'New appointment scheduled',
-    description: 'Your telemedicine appointment has been confirmed.',
-    date: 'Jan - 8 - 2026 - 10:00 AM',
-    actions: [{ label: 'Edit', variant: 'success', action: 'edit' }],
-  },
-  {
-    id: '3',
-    type: 'exam',
-    title: 'New exam result available',
-    description: 'Your blood test results are now available.',
-    date: 'Jan - 5 - 2026 - 09:00 AM',
-    actions: [{ label: 'View now', variant: 'success', action: 'view' }],
-  },
-  {
-    id: '4',
-    type: 'canceled',
-    title: 'Appointment canceled',
-    description: 'Your appointment on Jan 4 has been canceled.',
-    date: 'Jan - 4 - 2026 - 03:30 PM',
-    actions: [{ label: 'New appointment', variant: 'success', action: 'new' }],
-  },
-  {
-    id: '5',
-    type: 'warning',
-    title: 'Appointment will be canceled',
-    description: 'Complete payment within 24 hours to keep your appointment.',
-    date: 'Jan - 3 - 2026 - 11:00 AM',
-    actions: [
-      { label: 'Cancel appointment', variant: 'text', action: 'cancel' },
-      { label: 'Finish now', variant: 'success', action: 'finish' },
-    ],
-  },
-];
 
 const borderColors: Record<Notification['type'], string> = {
   booking: 'var(--color-primary-700)',
@@ -71,7 +29,65 @@ const borderColors: Record<Notification['type'], string> = {
 
 export function Notifications() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const mockNotifications: Notification[] = [
+    {
+      id: '1',
+      type: 'booking',
+      titleKey: 'notifications.items.finishBooking.title',
+      descriptionKey: 'notifications.items.finishBooking.description',
+      date: new Date('2026-01-06T14:00:00'),
+      actions: [
+        { labelKey: 'notifications.cancelAppointment', variant: 'text', action: 'cancel' },
+        { labelKey: 'notifications.finishNow', variant: 'success', action: 'finish' },
+      ],
+    },
+    {
+      id: '2',
+      type: 'appointment',
+      titleKey: 'notifications.items.newAppointmentScheduled.title',
+      descriptionKey: 'notifications.items.newAppointmentScheduled.description',
+      date: new Date('2026-01-08T10:00:00'),
+      actions: [{ labelKey: 'common.edit', variant: 'success', action: 'edit' }],
+    },
+    {
+      id: '3',
+      type: 'exam',
+      titleKey: 'notifications.items.newExamResult.title',
+      descriptionKey: 'notifications.items.newExamResult.description',
+      date: new Date('2026-01-05T09:00:00'),
+      actions: [{ labelKey: 'notifications.viewNow', variant: 'success', action: 'view' }],
+    },
+    {
+      id: '4',
+      type: 'canceled',
+      titleKey: 'notifications.items.appointmentCanceled.title',
+      descriptionKey: 'notifications.items.pageAppointmentCanceled.description',
+      date: new Date('2026-01-04T15:30:00'),
+      actions: [{ labelKey: 'notifications.newAppointment', variant: 'success', action: 'new' }],
+    },
+    {
+      id: '5',
+      type: 'warning',
+      titleKey: 'notifications.items.appointmentWillBeCanceled.title',
+      descriptionKey: 'notifications.items.appointmentWillBeCanceled.description',
+      date: new Date('2026-01-03T11:00:00'),
+      actions: [
+        { labelKey: 'notifications.cancelAppointment', variant: 'text', action: 'cancel' },
+        { labelKey: 'notifications.finishNow', variant: 'success', action: 'finish' },
+      ],
+    },
+  ];
   const [notifications] = useState<Notification[]>(mockNotifications);
+
+  const formatDateTime = (date: Date) =>
+    date.toLocaleString(i18n.language, {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
   const handleAction = (notificationId: string, action: string) => {
     console.log(`Action ${action} on notification ${notificationId}`);
@@ -84,7 +100,7 @@ export function Notifications() {
 
   return (
     <div className={styles.container}>
-      <Header title="Notifications" showBackButton />
+      <Header title={t('notifications.title')} showBackButton />
 
       <div className={styles.list}>
         {notifications.map((notification) => (
@@ -94,9 +110,9 @@ export function Notifications() {
             padding="medium"
             className={styles.notificationCard}
           >
-            <h3 className={styles.title}>{notification.title}</h3>
-            <p className={styles.description}>{notification.description}</p>
-            <p className={styles.date}>{notification.date}</p>
+            <h3 className={styles.title}>{t(notification.titleKey)}</h3>
+            <p className={styles.description}>{t(notification.descriptionKey)}</p>
+            <p className={styles.date}>{formatDateTime(notification.date)}</p>
             {notification.actions && (
               <div className={styles.actions}>
                 {notification.actions.map((action, index) => (
@@ -106,7 +122,7 @@ export function Notifications() {
                     size="small"
                     onClick={() => handleAction(notification.id, action.action)}
                   >
-                    {action.label}
+                    {t(action.labelKey)}
                   </Button>
                 ))}
               </div>

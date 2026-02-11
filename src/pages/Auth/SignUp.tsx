@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  Mail, 
-  Lock, 
-  User, 
-  HeartPulse, 
-  Eye, 
-  EyeOff, 
+import { useTranslation } from 'react-i18next';
+import {
+  Mail,
+  Lock,
+  User,
+  HeartPulse,
+  Eye,
+  EyeOff,
   ArrowRight,
   Shield,
   Clock,
-  FileText
+  FileText,
 } from 'lucide-react';
 import { Button } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
@@ -18,6 +19,7 @@ import styles from './Auth.module.css';
 
 export function SignUp() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { register } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,15 +27,15 @@ export function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [errorKey, setErrorKey] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setErrorKey('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setErrorKey('auth.errors.passwordsDoNotMatch');
       return;
     }
 
@@ -44,10 +46,10 @@ export function SignUp() {
       if (success) {
         navigate('/dashboard');
       } else {
-        setError('Registration failed. Please try again.');
+        setErrorKey('auth.errors.registrationFailed');
       }
     } catch {
-      setError('An error occurred. Please try again.');
+      setErrorKey('auth.errors.generic');
     } finally {
       setLoading(false);
     }
@@ -55,7 +57,6 @@ export function SignUp() {
 
   return (
     <div className={styles.authPage}>
-      {/* Left Side - Branding */}
       <div className={styles.authBrand}>
         <div className={styles.brandContent}>
           <div className={styles.brandLogo}>
@@ -63,58 +64,52 @@ export function SignUp() {
             <span>medstation</span>
           </div>
           <h1 className={styles.brandTitle}>
-            Start Your<br />
-            <span>Health Journey</span>
+            {t('auth.signUp.brandTitleLine1')}<br />
+            <span>{t('auth.signUp.brandTitleLine2')}</span>
           </h1>
-          <p className={styles.brandDescription}>
-            Join thousands of patients who trust MedStation for their 
-            healthcare management. Simple, secure, and always accessible.
-          </p>
-          
+          <p className={styles.brandDescription}>{t('auth.signUp.brandDescription')}</p>
+
           <div className={styles.features}>
             <div className={styles.feature}>
               <Shield size={24} />
-              <span>Secure & Private</span>
+              <span>{t('auth.featureSecure')}</span>
             </div>
             <div className={styles.feature}>
               <Clock size={24} />
-              <span>24/7 Access</span>
+              <span>{t('auth.featureAccess')}</span>
             </div>
             <div className={styles.feature}>
               <FileText size={24} />
-              <span>Digital Records</span>
+              <span>{t('auth.featureRecords')}</span>
             </div>
           </div>
         </div>
-        
+
         <div className={styles.brandPattern} />
       </div>
 
-      {/* Right Side - Form */}
       <div className={styles.authFormSection}>
         <div className={styles.formContainer}>
-          {/* Back Link */}
           <Link to="/login" className={styles.backLink}>
             <ArrowRight size={16} style={{ transform: 'rotate(180deg)' }} />
-            Back to login
+            {t('auth.backToLogin')}
           </Link>
 
           <div className={styles.formHeader}>
-            <h2>Create Account</h2>
-            <p>Fill in your details to get started</p>
+            <h2>{t('auth.signUp.createAccount')}</h2>
+            <p>{t('auth.signUp.fillDetails')}</p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit}>
-            {/* Name Input */}
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Full Name</label>
+              <label className={styles.formLabel}>{t('common.fullName')}</label>
               <div className={styles.inputWrapper}>
                 <User size={18} />
                 <input
                   type="text"
-                  placeholder="John Doe"
+                  placeholder={t('auth.placeholders.fullName')}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(event) => setName(event.target.value)}
                   disabled={loading}
                   className={styles.formInput}
                   required
@@ -122,16 +117,15 @@ export function SignUp() {
               </div>
             </div>
 
-            {/* Email Input */}
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Email</label>
+              <label className={styles.formLabel}>{t('common.email')}</label>
               <div className={styles.inputWrapper}>
                 <Mail size={18} />
                 <input
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder={t('auth.placeholders.email')}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                   disabled={loading}
                   className={styles.formInput}
                   required
@@ -139,16 +133,15 @@ export function SignUp() {
               </div>
             </div>
 
-            {/* Password Input */}
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Password</label>
+              <label className={styles.formLabel}>{t('common.password')}</label>
               <div className={styles.inputWrapper}>
                 <Lock size={18} />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a password"
+                  placeholder={t('auth.placeholders.createPassword')}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(event) => setPassword(event.target.value)}
                   disabled={loading}
                   className={styles.formInput}
                   required
@@ -158,22 +151,22 @@ export function SignUp() {
                   onClick={() => setShowPassword(!showPassword)}
                   className={styles.togglePassword}
                   tabIndex={-1}
+                  aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            {/* Confirm Password Input */}
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Confirm Password</label>
+              <label className={styles.formLabel}>{t('common.confirmPassword')}</label>
               <div className={styles.inputWrapper}>
                 <Lock size={18} />
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm your password"
+                  placeholder={t('auth.placeholders.confirmPassword')}
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
                   disabled={loading}
                   className={styles.formInput}
                   required
@@ -183,13 +176,14 @@ export function SignUp() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className={styles.togglePassword}
                   tabIndex={-1}
+                  aria-label={showConfirmPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            {error && <p className={styles.error}>{error}</p>}
+            {errorKey && <p className={styles.error}>{t(errorKey)}</p>}
 
             <Button
               variant="primary"
@@ -201,11 +195,11 @@ export function SignUp() {
               {loading ? (
                 <>
                   <span className={styles.loadingSpinner} />
-                  Creating Account...
+                  {t('auth.signUp.creatingAccount')}
                 </>
               ) : (
                 <>
-                  Create Account
+                  {t('auth.signUp.createAccount')}
                   <ArrowRight size={18} />
                 </>
               )}
@@ -213,16 +207,14 @@ export function SignUp() {
           </form>
 
           <p className={styles.signupText}>
-            Already have an account?{' '}
+            {t('auth.signUp.alreadyHaveAccount')}{' '}
             <Link to="/login" className={styles.signupLink}>
-              Sign in
+              {t('auth.login.signIn')}
             </Link>
           </p>
         </div>
 
-        <p className={styles.copyright}>
-          © {new Date().getFullYear()} MedStation. All rights reserved.
-        </p>
+        <p className={styles.copyright}>{t('auth.copyright', { year: new Date().getFullYear() })}</p>
       </div>
     </div>
   );

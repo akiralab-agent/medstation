@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { Header, TimeSlot, Modal } from '../../components/ui';
 import {
@@ -24,41 +25,20 @@ interface SelectedSlot {
   time: string;
 }
 
-const formatTime = (dateTime: string) => {
-  const parsed = new Date(dateTime);
-  if (!Number.isNaN(parsed.getTime())) {
-    return parsed.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-    });
-  }
-
-  const compactTime = dateTime.match(/T(\d{2})(\d{2})/);
-  if (compactTime) {
-    return `${compactTime[1]}:${compactTime[2]}`;
-  }
-
-  const regularTime = dateTime.match(/T(\d{2}):(\d{2})/);
-  if (regularTime) {
-    return `${regularTime[1]}:${regularTime[2]}`;
-  }
-
-  return dateTime;
-};
-
 const groupSlotsByResource = (slots: AvailabilitySlot[]) =>
-  slots.reduce<Record<string, AvailabilitySlot[]>>((acc, slot) => {
+  slots.reduce<Record<string, AvailabilitySlot[]>>((accumulator, slot) => {
     const normalizedId = slot.resourceId.trim().toLowerCase();
-    if (!acc[normalizedId]) {
-      acc[normalizedId] = [];
+    if (!accumulator[normalizedId]) {
+      accumulator[normalizedId] = [];
     }
-    acc[normalizedId].push(slot);
-    return acc;
+    accumulator[normalizedId].push(slot);
+    return accumulator;
   }, {});
 
 export function ChooseSchedule() {
   const navigate = useNavigate();
   const routerLocation = useLocation();
+  const { t, i18n } = useTranslation();
   const state = (routerLocation.state ?? {}) as ChooseScheduleNavigationState;
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
@@ -74,7 +54,37 @@ export function ChooseSchedule() {
 
   const selectedLocationId = state.locationId?.trim() || '';
   const selectedLocationName = state.location?.trim() || '';
-  const selectedSpecialty = state.specialty?.trim() || 'General';
+  const selectedSpecialty = state.specialty?.trim() || t('schedule.specialtyGeneralPractice');
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString(i18n.language, {
+      month: 'long',
+      day: '2-digit',
+      year: 'numeric',
+    });
+  };
+
+  const formatTime = (dateTime: string) => {
+    const parsed = new Date(dateTime);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toLocaleTimeString(i18n.language, {
+        hour: 'numeric',
+        minute: '2-digit',
+      });
+    }
+
+    const compactTime = dateTime.match(/T(\d{2})(\d{2})/);
+    if (compactTime) {
+      return `${compactTime[1]}:${compactTime[2]}`;
+    }
+
+    const regularTime = dateTime.match(/T(\d{2}):(\d{2})/);
+    if (regularTime) {
+      return `${regularTime[1]}:${regularTime[2]}`;
+    }
+
+    return dateTime;
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -82,7 +92,7 @@ export function ChooseSchedule() {
     const loadResources = async () => {
       if (!selectedLocationId && !selectedLocationName) {
         setResources([]);
-        setResourcesError('Select a location first to load providers.');
+        setResourcesError(t('schedule.selectLocationFirst'));
         return;
       }
 
@@ -107,7 +117,7 @@ export function ChooseSchedule() {
         }
 
         setResources([]);
-        setResourcesError('Unable to load providers for the selected location.');
+        setResourcesError(t('schedule.providersLoadError'));
       } finally {
         if (isMounted) {
           setIsLoadingResources(false);
@@ -120,7 +130,7 @@ export function ChooseSchedule() {
     return () => {
       isMounted = false;
     };
-  }, [selectedLocationId, selectedLocationName]);
+  }, [selectedLocationId, selectedLocationName, t]);
 
   useEffect(() => {
     let isMounted = true;
@@ -129,7 +139,7 @@ export function ChooseSchedule() {
       if (!selectedLocationId || resources.length === 0) {
         setSlotsByResource({});
         setAvailabilityError(
-          selectedLocationId ? null : 'Location ID is required to fetch available slots.'
+          selectedLocationId ? null : t('schedule.locationIdRequired')
         );
         return;
       }
@@ -155,7 +165,7 @@ export function ChooseSchedule() {
         }
 
         setSlotsByResource({});
-        setAvailabilityError('Unable to load available slots for this date.');
+        setAvailabilityError(t('schedule.slotsLoadError'));
       } finally {
         if (isMounted) {
           setIsLoadingAvailability(false);
@@ -168,15 +178,7 @@ export function ChooseSchedule() {
     return () => {
       isMounted = false;
     };
-  }, [currentDate, resources, selectedLocationId]);
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: '2-digit',
-      year: 'numeric',
-    });
-  };
+  }, [currentDate, resources, selectedLocationId, t]);
 
   const changeDate = (days: number) => {
     setSelectedSlot(null);
@@ -231,32 +233,32 @@ export function ChooseSchedule() {
 
   return (
     <div className={styles.container}>
-      <Header title="Choose Your Schedule" showBackButton variant="primary" />
+      <Header title={t('schedule.chooseSchedule')} showBackButton variant="primary" />
 
       <div className={styles.dateNav}>
-        <button className={styles.dateNavButton} onClick={() => changeDate(-1)}>
+        <button className={styles.dateNavButton} onClick={() => changeDate(-1)} aria-label={t('common.previous')}>
           <ChevronLeft size={24} />
         </button>
         <span className={`${styles.dateText} ${dateAnimation ? styles[dateAnimation] : ''}`}>
           {formatDate(currentDate)}
         </span>
-        <button className={styles.dateNavButton} onClick={() => changeDate(1)}>
+        <button className={styles.dateNavButton} onClick={() => changeDate(1)} aria-label={t('common.next')}>
           <ChevronRight size={24} />
         </button>
       </div>
 
       <div className={`${styles.doctorList} ${dateAnimation ? styles.animateList : ''}`}>
         {isLoadingResources && (
-          <p className={styles.statusMessage}>Loading providers for this location...</p>
+          <p className={styles.statusMessage}>{t('schedule.loadingProviders')}</p>
         )}
         {resourcesError && <p className={styles.statusMessage}>{resourcesError}</p>}
         {!isLoadingResources && !resourcesError && resources.length === 0 && (
-          <p className={styles.statusMessage}>No providers found for this location.</p>
+          <p className={styles.statusMessage}>{t('schedule.noProvidersFound')}</p>
         )}
         {availabilityError && <p className={styles.statusMessage}>{availabilityError}</p>}
         {!isLoadingResources && !resourcesError && !isLoadingAvailability && !availabilityError &&
           resources.length > 0 && resourcesWithSlots.length === 0 && (
-            <p className={styles.statusMessage}>There are no available slots on this day.</p>
+            <p className={styles.statusMessage}>{t('schedule.noSlotsThisDay')}</p>
           )}
 
         {displayedResources.map((resource) => {
@@ -270,16 +272,17 @@ export function ChooseSchedule() {
                 <button
                   className={`${styles.favoriteButton} ${favorites[resource.id] ? styles.favorited : ''}`}
                   onClick={() => toggleFavorite(resource.id)}
+                  aria-label={t('common.favorite')}
                 >
                   <Heart size={20} fill={favorites[resource.id] ? 'currentColor' : 'none'} />
                 </button>
               </div>
               <p className={styles.doctorSpecialty}>{selectedSpecialty}</p>
-              <p className={styles.doctorServices}>Consultation</p>
-              <p className={styles.doctorAddress}>{selectedLocationName || 'Selected location'}</p>
+              <p className={styles.doctorServices}>{t('schedule.consultation')}</p>
+              <p className={styles.doctorAddress}>{selectedLocationName || t('schedule.selectedLocation')}</p>
 
               {isLoadingAvailability ? (
-                <p className={styles.noSlots}>Loading available slots...</p>
+                <p className={styles.noSlots}>{t('schedule.loadingAvailableSlots')}</p>
               ) : (
                 <div className={styles.timeSlots}>
                   {resourceSlots.map((slot) => {
@@ -307,10 +310,10 @@ export function ChooseSchedule() {
         visible={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         type="confirm"
-        title="CONFIRM APPOINTMENT"
-        message="Review your appointment details and proceed to the next step."
-        primaryAction={{ label: 'CONFIRM AND CONTINUE', onClick: handleConfirm }}
-        secondaryAction={{ label: 'CANCEL', onClick: () => setShowConfirmModal(false) }}
+        title={t('schedule.confirmAppointmentTitle')}
+        message={t('schedule.confirmAppointmentMessage')}
+        primaryAction={{ label: t('schedule.confirmAndContinue'), onClick: handleConfirm }}
+        secondaryAction={{ label: t('common.cancel').toUpperCase(), onClick: () => setShowConfirmModal(false) }}
       >
         <div style={{ textAlign: 'left', marginTop: '16px' }}>
           <p style={{ color: 'var(--color-neutral-600)', fontSize: '14px' }}>

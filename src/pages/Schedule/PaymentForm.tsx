@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Header, Input, Button, Modal } from '../../components/ui';
 import styles from './PaymentForm.module.css';
 
 export function PaymentForm() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [cardNumber, setCardNumber] = useState('');
   const [expiry, setExpiry] = useState('');
   const [cvv, setCvv] = useState('');
@@ -13,16 +15,28 @@ export function PaymentForm() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
-  // Mocked service value - in real app, this would come from the selected appointment
-const serviceValue = 150.0;
+  const serviceValue = 150.0;
+  const scheduledDateTime = new Date('2025-10-25T14:00:00');
+  const scheduledDateLabel = scheduledDateTime.toLocaleDateString(i18n.language, {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+  });
+  const scheduledTimeLabel = scheduledDateTime.toLocaleTimeString(i18n.language, {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  const serviceValueFormatted = new Intl.NumberFormat(i18n.language, {
+    style: 'currency',
+    currency: 'USD',
+  }).format(serviceValue);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     setLoading(true);
 
     setTimeout(() => {
       setLoading(false);
-      // Simulate random success/failure
       if (cardNumber.includes('0000')) {
         setShowError(true);
       } else {
@@ -32,79 +46,79 @@ const serviceValue = 150.0;
   };
 
   const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    const matches = v.match(/\d{4,16}/g);
+    const numericValue = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = numericValue.match(/\d{4,16}/g);
     const match = (matches && matches[0]) || '';
     const parts = [];
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
+    for (let index = 0, len = match.length; index < len; index += 4) {
+      parts.push(match.substring(index, index + 4));
     }
     return parts.length ? parts.join(' ') : value;
   };
 
   const formatExpiry = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    if (v.length >= 2) {
-      return v.slice(0, 2) + '/' + v.slice(2, 4);
+    const numericValue = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    if (numericValue.length >= 2) {
+      return numericValue.slice(0, 2) + '/' + numericValue.slice(2, 4);
     }
-    return v;
+    return numericValue;
   };
 
   return (
     <div className={styles.container}>
-      <Header title="Payment" showBackButton variant="primary" />
+      <Header title={t('payment.title')} showBackButton variant="primary" />
 
       <div className={styles.content}>
         <div className={styles.balanceCard}>
           <div className={styles.scheduledInfo}>
-            <span className={styles.scheduledLabel}>Scheduled</span>
-            <span className={styles.scheduledDate}>Out - 25 - 2025</span>
-            <span className={styles.scheduledTime}>02:00 PM</span>
+            <span className={styles.scheduledLabel}>{t('payment.scheduled')}</span>
+            <span className={styles.scheduledDate}>{scheduledDateLabel}</span>
+            <span className={styles.scheduledTime}>{scheduledTimeLabel}</span>
           </div>
           <div className={styles.valueSection}>
-            <span className={styles.valueLabel}>Service value</span>
-            <span className={styles.valueAmount}>${serviceValue.toFixed(2)}</span>
+            <span className={styles.valueLabel}>{t('payment.serviceValue')}</span>
+            <span className={styles.valueAmount}>{serviceValueFormatted}</span>
           </div>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          <h3 className={styles.formTitle}>Card Information</h3>
+          <h3 className={styles.formTitle}>{t('payment.cardInformation')}</h3>
 
           <Input
-            label="Card Number"
+            label={t('payment.cardNumber')}
             placeholder="0000 0000 0000 0000"
             value={cardNumber}
-            onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+            onChange={(event) => setCardNumber(formatCardNumber(event.target.value))}
             maxLength={19}
           />
 
           <div className={styles.row}>
             <Input
-              label="Expiry Date"
+              label={t('payment.expiryDate')}
               placeholder="MM/YY"
               value={expiry}
-              onChange={(e) => setExpiry(formatExpiry(e.target.value))}
+              onChange={(event) => setExpiry(formatExpiry(event.target.value))}
               maxLength={5}
             />
             <Input
               label="CVV"
               placeholder="123"
               value={cvv}
-              onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              onChange={(event) => setCvv(event.target.value.replace(/\D/g, '').slice(0, 4))}
               maxLength={4}
               type="password"
             />
           </div>
 
           <Input
-            label="Cardholder Name"
-            placeholder="Name on card"
+            label={t('payment.cardholderName')}
+            placeholder={t('payment.nameOnCard')}
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(event) => setName(event.target.value)}
           />
 
           <p className={styles.disclaimer}>
-            Your card information is securely processed and tokenized. We do not store your full card details.
+            {t('payment.disclaimer')}
           </p>
 
           <div className={styles.buttons}>
@@ -114,10 +128,10 @@ const serviceValue = 150.0;
               type="submit"
               disabled={loading || !cardNumber || !expiry || !cvv || !name}
             >
-              {loading ? 'Processing...' : 'GO TO PAYMENT'}
+              {loading ? t('payment.processing') : t('payment.goToPayment')}
             </Button>
             <Button variant="secondary" fullWidth onClick={() => navigate(-1)}>
-              CANCEL
+              {t('common.cancel')}
             </Button>
           </div>
         </form>
@@ -130,10 +144,10 @@ const serviceValue = 150.0;
           navigate('/appointments');
         }}
         type="success"
-        title="PAYMENT SUCCESSFUL"
-        message="Your payment has been processed successfully. Your appointment is confirmed!"
+        title={t('payment.successTitle')}
+        message={t('payment.successMessage')}
         primaryAction={{
-          label: 'VIEW MY APPOINTMENTS',
+          label: t('appointments.viewMyAppointments'),
           onClick: () => navigate('/appointments'),
         }}
       />
@@ -142,14 +156,14 @@ const serviceValue = 150.0;
         visible={showError}
         onClose={() => setShowError(false)}
         type="error"
-        title="CARD REFUSED"
-        message="Your payment could not be processed. Please try a different payment method."
+        title={t('payment.cardRefusedTitle')}
+        message={t('payment.cardRefusedMessage')}
         primaryAction={{
-          label: 'TRY ANOTHER CARD',
+          label: t('payment.tryAnotherCard'),
           onClick: () => setShowError(false),
         }}
         secondaryAction={{
-          label: 'CHANGE PAYMENT METHOD',
+          label: t('payment.changePaymentMethod'),
           onClick: () => navigate('/schedule/payment'),
         }}
       />

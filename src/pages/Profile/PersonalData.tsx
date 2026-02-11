@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Header, Input, Button } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './Profile.module.css';
 
 export function PersonalData() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [name, setName] = useState(user?.name || '');
   const [dateOfBirth, setDateOfBirth] = useState(user?.dateOfBirth || '');
   const [phone, setPhone] = useState(user?.cellPhone || user?.phone || '');
@@ -17,76 +19,79 @@ export function PersonalData() {
 
   const handleSave = () => {
     setLoading(true);
-    // Simulated save
     setTimeout(() => {
       setLoading(false);
     }, 1000);
   };
 
   const formatPhone = (value: string) => {
-    const v = value.replace(/\D/g, '');
-    if (v.length <= 3) return v;
-    if (v.length <= 6) return `(${v.slice(0, 3)}) ${v.slice(3)}`;
-    return `(${v.slice(0, 3)}) ${v.slice(3, 6)}-${v.slice(6, 10)}`;
+    const numericValue = value.replace(/\D/g, '');
+    if (numericValue.length <= 3) {
+      return numericValue;
+    }
+    if (numericValue.length <= 6) {
+      return `(${numericValue.slice(0, 3)}) ${numericValue.slice(3)}`;
+    }
+    return `(${numericValue.slice(0, 3)}) ${numericValue.slice(3, 6)}-${numericValue.slice(6, 10)}`;
   };
 
   return (
     <div className={styles.container}>
-      <Header title="Personal Data" showBackButton />
+      <Header title={t('profile.personalData')} showBackButton />
 
       <div className={styles.formContent}>
         <div className={styles.formGroup}>
           <Input
-            label="Full name"
+            label={t('common.fullName')}
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(event) => setName(event.target.value)}
           />
         </div>
 
         <div className={styles.formGroup}>
           <Input
-            label="Date of birth"
+            label={t('profile.dateOfBirth')}
             value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
-            placeholder="MM/DD/YYYY"
+            onChange={(event) => setDateOfBirth(event.target.value)}
+            placeholder={t('profile.dateOfBirthPlaceholder')}
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.inputLabel}>Cell phone</label>
+          <label className={styles.inputLabel}>{t('profile.cellPhone')}</label>
           <div className={styles.phoneInput}>
             <span className={styles.countryCode}>🇺🇸</span>
             <Input
               value={phone}
-              onChange={(e) => setPhone(formatPhone(e.target.value))}
-              placeholder="(555) 555-5555"
+              onChange={(event) => setPhone(formatPhone(event.target.value))}
+              placeholder={t('profile.phonePlaceholder')}
             />
           </div>
         </div>
 
         <div className={styles.formGroup}>
           <Input
-            label="Email"
+            label={t('common.email')}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="email@example.com"
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder={t('auth.placeholders.email')}
           />
         </div>
 
         <div className={styles.formGroup}>
           <Input
-            label="Address"
+            label={t('common.address')}
             value={addressLine1}
-            onChange={(e) => setAddressLine1(e.target.value)}
-            placeholder="Street address"
+            onChange={(event) => setAddressLine1(event.target.value)}
+            placeholder={t('profile.streetAddress')}
           />
         </div>
 
         <div className={styles.formGroup}>
           <Input
-            label="City"
+            label={t('common.city')}
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={(event) => setCity(event.target.value)}
           />
         </div>
 
@@ -94,16 +99,16 @@ export function PersonalData() {
           <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
             <div style={{ flex: 1 }}>
               <Input
-                label="State"
+                label={t('common.state')}
                 value={state}
-                onChange={(e) => setState(e.target.value)}
+                onChange={(event) => setState(event.target.value)}
               />
             </div>
             <div style={{ flex: 1 }}>
               <Input
-                label="ZIP"
+                label={t('common.zip')}
                 value={zip}
-                onChange={(e) => setZip(e.target.value)}
+                onChange={(event) => setZip(event.target.value)}
               />
             </div>
           </div>
@@ -115,7 +120,7 @@ export function PersonalData() {
           onClick={handleSave}
           disabled={loading}
         >
-          {loading ? 'Saving...' : 'Save Changes'}
+          {loading ? t('common.saving') : t('common.saveChanges')}
         </Button>
       </div>
     </div>

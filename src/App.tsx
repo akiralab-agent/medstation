@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Layout } from './components/Layout';
 
@@ -26,9 +27,11 @@ import { Media } from './pages/Media';
 import './styles/global.css';
 
 function LoadingScreen() {
+  const { t } = useTranslation();
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-      <p>Loading...</p>
+      <p>{t('common.loading')}</p>
     </div>
   );
 }

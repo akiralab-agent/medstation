@@ -1,41 +1,41 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  Key, 
-  HeartPulse, 
+import { useTranslation } from 'react-i18next';
+import {
+  Key,
+  HeartPulse,
   ArrowRight,
   Shield,
   Clock,
-  FileText
+  FileText,
 } from 'lucide-react';
 import { Button } from '../../components/ui';
 import styles from './Auth.module.css';
 
 export function RegistrationKey() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [registrationKey, setRegistrationKey] = useState('');
-  const [error, setError] = useState('');
+  const [errorKey, setErrorKey] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setErrorKey('');
     setLoading(true);
 
-    // Simulated key validation
     setTimeout(() => {
       setLoading(false);
       if (registrationKey.length >= 6) {
         navigate('/signup', { state: { registrationKey } });
       } else {
-        setError('Invalid registration key');
+        setErrorKey('auth.errors.invalidRegistrationKey');
       }
     }, 1000);
   };
 
   return (
     <div className={styles.authPage}>
-      {/* Left Side - Branding */}
       <div className={styles.authBrand}>
         <div className={styles.brandContent}>
           <div className={styles.brandLogo}>
@@ -43,58 +43,52 @@ export function RegistrationKey() {
             <span>medstation</span>
           </div>
           <h1 className={styles.brandTitle}>
-            Register With<br />
-            <span>Your Key</span>
+            {t('auth.registrationKey.brandTitleLine1')}<br />
+            <span>{t('auth.registrationKey.brandTitleLine2')}</span>
           </h1>
-          <p className={styles.brandDescription}>
-            Enter the registration key provided by your healthcare provider 
-            to create your secure account and access your medical records.
-          </p>
-          
+          <p className={styles.brandDescription}>{t('auth.registrationKey.brandDescription')}</p>
+
           <div className={styles.features}>
             <div className={styles.feature}>
               <Shield size={24} />
-              <span>Secure & Private</span>
+              <span>{t('auth.featureSecure')}</span>
             </div>
             <div className={styles.feature}>
               <Clock size={24} />
-              <span>24/7 Access</span>
+              <span>{t('auth.featureAccess')}</span>
             </div>
             <div className={styles.feature}>
               <FileText size={24} />
-              <span>Digital Records</span>
+              <span>{t('auth.featureRecords')}</span>
             </div>
           </div>
         </div>
-        
+
         <div className={styles.brandPattern} />
       </div>
 
-      {/* Right Side - Form */}
       <div className={styles.authFormSection}>
         <div className={styles.formContainer}>
-          {/* Back Link */}
           <Link to="/login" className={styles.backLink}>
             <ArrowRight size={16} style={{ transform: 'rotate(180deg)' }} />
-            Back to login
+            {t('auth.backToLogin')}
           </Link>
 
           <div className={styles.formHeader}>
-            <h2>Registration Key</h2>
-            <p>Enter the key provided by your healthcare provider</p>
+            <h2>{t('auth.registrationKey.title')}</h2>
+            <p>{t('auth.registrationKey.subtitle')}</p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit}>
-            {/* Registration Key Input */}
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Registration Key</label>
+              <label className={styles.formLabel}>{t('auth.registrationKey.label')}</label>
               <div className={styles.inputWrapper}>
                 <Key size={18} />
                 <input
                   type="text"
-                  placeholder="XXXX-XXXX-XXXX"
+                  placeholder={t('auth.placeholders.registrationKey')}
                   value={registrationKey}
-                  onChange={(e) => setRegistrationKey(e.target.value)}
+                  onChange={(event) => setRegistrationKey(event.target.value)}
                   disabled={loading}
                   className={styles.formInput}
                   required
@@ -102,7 +96,7 @@ export function RegistrationKey() {
               </div>
             </div>
 
-            {error && <p className={styles.error}>{error}</p>}
+            {errorKey && <p className={styles.error}>{t(errorKey)}</p>}
 
             <Button
               variant="primary"
@@ -114,28 +108,26 @@ export function RegistrationKey() {
               {loading ? (
                 <>
                   <span className={styles.loadingSpinner} />
-                  Validating...
+                  {t('auth.registrationKey.validating')}
                 </>
               ) : (
                 <>
-                  Continue
+                  {t('common.continue')}
                   <ArrowRight size={18} />
                 </>
               )}
             </Button>
 
             <p className={styles.signupText}>
-              Don&apos;t have a key?{' '}
+              {t('auth.registrationKey.noKey')}{' '}
               <Link to="/signup" className={styles.signupLink}>
-                Sign up without key
+                {t('auth.registrationKey.signUpWithoutKey')}
               </Link>
             </p>
           </form>
         </div>
 
-        <p className={styles.copyright}>
-          © {new Date().getFullYear()} MedStation. All rights reserved.
-        </p>
+        <p className={styles.copyright}>{t('auth.copyright', { year: new Date().getFullYear() })}</p>
       </div>
     </div>
   );

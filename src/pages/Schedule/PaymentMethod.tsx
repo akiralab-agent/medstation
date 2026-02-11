@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { DollarSign, CreditCard, Landmark } from 'lucide-react';
 import { Header, Modal } from '../../components/ui';
 import { useState } from 'react';
@@ -10,23 +11,22 @@ interface PaymentOption {
   label: string;
 }
 
-const inPersonPayments: PaymentOption[] = [
-  { id: 'zelle', icon: Landmark, label: 'Zelle®' },
-  { id: 'cash', icon: DollarSign, label: 'Cash' },
-  { id: 'card', icon: CreditCard, label: 'Credit or Debit Card' },
-  { id: 'carecredit', icon: CreditCard, label: 'Care Credit' },
-];
-
-const telemedicinePayments: PaymentOption[] = [
-  { id: 'card', icon: CreditCard, label: 'Credit or Debit Card' },
-  { id: 'carecredit', icon: CreditCard, label: 'Care Credit' },
-];
-
 export function PaymentMethod() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const isTelemedicine = location.state?.type === 'telemedicine';
+  const inPersonPayments: PaymentOption[] = [
+    { id: 'zelle', icon: Landmark, label: 'Zelle' },
+    { id: 'cash', icon: DollarSign, label: t('payment.cash') },
+    { id: 'card', icon: CreditCard, label: t('payment.card') },
+    { id: 'carecredit', icon: CreditCard, label: t('payment.careCredit') },
+  ];
+  const telemedicinePayments: PaymentOption[] = [
+    { id: 'card', icon: CreditCard, label: t('payment.card') },
+    { id: 'carecredit', icon: CreditCard, label: t('payment.careCredit') },
+  ];
   const payments = isTelemedicine ? telemedicinePayments : inPersonPayments;
 
   const handleSelect = (paymentId: string) => {
@@ -44,7 +44,7 @@ export function PaymentMethod() {
 
   return (
     <div className={styles.container}>
-      <Header title="Payment Method" showBackButton variant="primary" />
+      <Header title={t('payment.methodTitle')} showBackButton variant="primary" />
 
       <div className={styles.paymentGrid}>
         {payments.map((payment) => {
@@ -66,9 +66,9 @@ export function PaymentMethod() {
         visible={showSuccessModal}
         onClose={handleSuccessClose}
         type="success"
-        title="APPOINTMENT CONFIRMED"
-        message="Your appointment has been successfully scheduled. You will receive a confirmation email shortly."
-        primaryAction={{ label: 'VIEW MY APPOINTMENTS', onClick: handleSuccessClose }}
+        title={t('payment.appointmentConfirmedTitle')}
+        message={t('payment.appointmentConfirmedMessage')}
+        primaryAction={{ label: t('appointments.viewMyAppointments'), onClick: handleSuccessClose }}
       />
     </div>
   );

@@ -1,24 +1,31 @@
 import { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Bell, 
-  X, 
-  Calendar, 
-  FileText, 
-  AlertTriangle, 
+import { useTranslation } from 'react-i18next';
+import {
+  Bell,
+  X,
+  Calendar,
+  FileText,
+  AlertTriangle,
   CheckCircle2,
-  Info
+  Info,
 } from 'lucide-react';
 import styles from './NotificationDropdown.module.css';
+
+interface NotificationAction {
+  labelKey: string;
+  variant: 'primary' | 'secondary' | 'text';
+  action: string;
+}
 
 interface Notification {
   id: string;
   type: 'booking' | 'appointment' | 'exam' | 'canceled' | 'warning' | 'info';
-  title: string;
-  description: string;
-  time: string;
+  titleKey: string;
+  descriptionKey: string;
+  timeKey: string;
   unread: boolean;
-  actions?: { label: string; variant: 'primary' | 'secondary' | 'text'; action: string }[];
+  actions?: NotificationAction[];
 }
 
 interface NotificationDropdownProps {
@@ -31,52 +38,52 @@ const mockNotifications: Notification[] = [
   {
     id: '1',
     type: 'booking',
-    title: 'Finish your booking',
-    description: "You're almost there! Complete your appointment booking now.",
-    time: '2 min ago',
+    titleKey: 'notifications.items.finishBooking.title',
+    descriptionKey: 'notifications.items.finishBooking.description',
+    timeKey: 'notifications.items.finishBooking.time',
     unread: true,
     actions: [
-      { label: 'Cancel', variant: 'text', action: 'cancel' },
-      { label: 'Finish', variant: 'primary', action: 'finish' },
+      { labelKey: 'common.cancel', variant: 'text', action: 'cancel' },
+      { labelKey: 'notifications.finishNow', variant: 'primary', action: 'finish' },
     ],
   },
   {
     id: '2',
     type: 'appointment',
-    title: 'Appointment confirmed',
-    description: 'Your telemedicine appointment has been confirmed for tomorrow.',
-    time: '1 hour ago',
+    titleKey: 'notifications.items.appointmentConfirmed.title',
+    descriptionKey: 'notifications.items.appointmentConfirmed.description',
+    timeKey: 'notifications.items.appointmentConfirmed.time',
     unread: true,
-    actions: [{ label: 'View', variant: 'primary', action: 'view' }],
+    actions: [{ labelKey: 'common.view', variant: 'primary', action: 'view' }],
   },
   {
     id: '3',
     type: 'exam',
-    title: 'New exam result available',
-    description: 'Your blood test results are now available for review.',
-    time: '3 hours ago',
+    titleKey: 'notifications.items.newExamResult.title',
+    descriptionKey: 'notifications.items.newExamResult.description',
+    timeKey: 'notifications.items.newExamResult.time',
     unread: true,
-    actions: [{ label: 'View', variant: 'primary', action: 'view' }],
+    actions: [{ labelKey: 'common.view', variant: 'primary', action: 'view' }],
   },
   {
     id: '4',
     type: 'canceled',
-    title: 'Appointment canceled',
-    description: 'Your appointment on Jan 4 has been canceled by the doctor.',
-    time: '1 day ago',
+    titleKey: 'notifications.items.appointmentCanceled.title',
+    descriptionKey: 'notifications.items.appointmentCanceled.description',
+    timeKey: 'notifications.items.appointmentCanceled.time',
     unread: false,
-    actions: [{ label: 'Reschedule', variant: 'primary', action: 'new' }],
+    actions: [{ labelKey: 'appointments.reschedule', variant: 'primary', action: 'new' }],
   },
   {
     id: '5',
     type: 'warning',
-    title: 'Payment required',
-    description: 'Complete payment within 24 hours to keep your appointment.',
-    time: '2 days ago',
+    titleKey: 'notifications.items.paymentRequired.title',
+    descriptionKey: 'notifications.items.paymentRequired.description',
+    timeKey: 'notifications.items.paymentRequired.time',
     unread: false,
     actions: [
-      { label: 'Cancel', variant: 'text', action: 'cancel' },
-      { label: 'Pay now', variant: 'primary', action: 'finish' },
+      { labelKey: 'common.cancel', variant: 'text', action: 'cancel' },
+      { labelKey: 'payment.payNow', variant: 'primary', action: 'finish' },
     ],
   },
 ];
@@ -101,9 +108,9 @@ const colorMap = {
 
 export function NotificationDropdown({ isOpen, onClose, triggerRef }: NotificationDropdownProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close on click outside (ignore clicks on trigger)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -139,14 +146,13 @@ export function NotificationDropdown({ isOpen, onClose, triggerRef }: Notificati
     onClose();
   };
 
-  const unreadCount = mockNotifications.filter(n => n.unread).length;
+  const unreadCount = mockNotifications.filter((notification) => notification.unread).length;
 
   return (
     <div ref={dropdownRef} className={`${styles.dropdown} ${isOpen ? styles.open : ''}`}>
-      {/* Header */}
       <div className={styles.header}>
         <h2 className={styles.headerTitle}>
-          Notifications
+          {t('notifications.title')}
           {unreadCount > 0 && (
             <span className={styles.unreadBadge}>{unreadCount}</span>
           )}
@@ -154,33 +160,32 @@ export function NotificationDropdown({ isOpen, onClose, triggerRef }: Notificati
         <div className={styles.headerActions}>
           {unreadCount > 0 && (
             <button className={styles.markAllBtn} onClick={() => console.log('Mark all read')}>
-              Mark all read
+              {t('notifications.markAllRead')}
             </button>
           )}
-          <button className={styles.closeBtn} onClick={onClose}>
+          <button className={styles.closeBtn} onClick={onClose} aria-label={t('common.close')}>
             <X size={18} />
           </button>
         </div>
       </div>
 
-      {/* Content */}
       <div className={styles.content}>
         {mockNotifications.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}>
               <Bell size={24} />
             </div>
-            <h3 className={styles.emptyTitle}>No notifications</h3>
-            <p className={styles.emptyText}>You&apos;re all caught up!</p>
+            <h3 className={styles.emptyTitle}>{t('notifications.emptyTitle')}</h3>
+            <p className={styles.emptyText}>{t('notifications.emptyText')}</p>
           </div>
         ) : (
           mockNotifications.map((notification) => {
             const Icon = iconMap[notification.type];
             const colorClass = colorMap[notification.type];
-            
+
             return (
-              <div 
-                key={notification.id} 
+              <div
+                key={notification.id}
                 className={`${styles.notification} ${notification.unread ? styles.unread : ''}`}
               >
                 <div className={`${styles.iconWrapper} ${styles[colorClass]}`}>
@@ -188,22 +193,22 @@ export function NotificationDropdown({ isOpen, onClose, triggerRef }: Notificati
                 </div>
                 <div className={styles.notificationContent}>
                   <div className={styles.notificationHeader}>
-                    <h3 className={styles.notificationTitle}>{notification.title}</h3>
-                    <span className={styles.notificationTime}>{notification.time}</span>
+                    <h3 className={styles.notificationTitle}>{t(notification.titleKey)}</h3>
+                    <span className={styles.notificationTime}>{t(notification.timeKey)}</span>
                   </div>
-                  <p className={styles.notificationText}>{notification.description}</p>
+                  <p className={styles.notificationText}>{t(notification.descriptionKey)}</p>
                   {notification.actions && (
                     <div className={styles.notificationActions}>
                       {notification.actions.map((action, index) => (
                         <button
                           key={index}
                           className={`${styles.actionBtn} ${styles[action.variant]}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
+                          onClick={(event) => {
+                            event.stopPropagation();
                             handleAction(notification.id, action.action);
                           }}
                         >
-                          {action.label}
+                          {t(action.labelKey)}
                         </button>
                       ))}
                     </div>
@@ -215,11 +220,10 @@ export function NotificationDropdown({ isOpen, onClose, triggerRef }: Notificati
         )}
       </div>
 
-      {/* Footer */}
       {mockNotifications.length > 0 && (
         <div className={styles.footer}>
           <button className={styles.viewAllLink} onClick={handleViewAll}>
-            View all notifications
+            {t('notifications.viewAll')}
           </button>
         </div>
       )}

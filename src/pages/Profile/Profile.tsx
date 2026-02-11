@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   FileText,
   BarChart3,
@@ -13,19 +14,19 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useState } from 'react';
 import styles from './Profile.module.css';
 
-const menuItems = [
-  { id: 'myinfo', icon: FileText, label: 'My Info', path: '/profile/info' },
-  { id: 'programs', icon: BarChart3, label: 'My Programs', path: '/profile/programs' },
-  { id: 'health', icon: Heart, label: 'Health Authorization', path: '/health' },
-  { id: 'dashboard', icon: Settings, label: 'Dashboard Settings', path: '/profile/dashboard-settings' },
-  { id: 'identity', icon: Camera, label: 'Confirm Identity', path: '/profile/identity' },
-  { id: 'notifications', icon: Bell, label: 'Notifications', path: '/profile/notifications' },
-];
-
 export function Profile() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const menuItems = [
+    { id: 'myinfo', icon: FileText, label: t('profile.myInfo'), path: '/profile/info' },
+    { id: 'programs', icon: BarChart3, label: t('profile.myPrograms'), path: '/profile/programs' },
+    { id: 'health', icon: Heart, label: t('profile.healthAuthorization'), path: '/health' },
+    { id: 'dashboard', icon: Settings, label: t('profile.dashboardSettings'), path: '/profile/dashboard-settings' },
+    { id: 'identity', icon: Camera, label: t('profile.confirmIdentity'), path: '/profile/identity' },
+    { id: 'notifications', icon: Bell, label: t('notifications.title'), path: '/profile/notifications' },
+  ];
 
   const handleLogout = () => {
     logout();
@@ -35,7 +36,7 @@ export function Profile() {
   const getInitials = (name: string) => {
     return name
       .split(' ')
-      .map((n) => n[0])
+      .map((namePart) => namePart[0])
       .join('')
       .slice(0, 2)
       .toUpperCase();
@@ -43,14 +44,14 @@ export function Profile() {
 
   return (
     <div className={styles.container}>
-      <Header title="Profile" variant="primary" />
+      <Header title={t('profile.title')} variant="primary" />
 
       <div className={styles.userCard}>
         <div className={styles.avatar}>
           {user?.name ? getInitials(user.name) : 'U'}
         </div>
         <div className={styles.userInfo}>
-          <h2 className={styles.userName}>{user?.name || 'User'}</h2>
+          <h2 className={styles.userName}>{user?.name || t('common.user')}</h2>
           <p className={styles.userEmail}>{user?.email || 'user@email.com'}</p>
         </div>
       </div>
@@ -69,7 +70,7 @@ export function Profile() {
         })}
         <ListItem
           leftIcon={<LogOut size={20} />}
-          title="Log Out"
+          title={t('common.logOut')}
           onClick={() => setShowLogoutModal(true)}
           divider={false}
         />
@@ -79,10 +80,10 @@ export function Profile() {
         visible={showLogoutModal}
         onClose={() => setShowLogoutModal(false)}
         type="confirm"
-        title="LOG OUT"
-        message="Are you sure you want to log out?"
-        primaryAction={{ label: 'Yes, Log Out', onClick: handleLogout }}
-        secondaryAction={{ label: 'Cancel', onClick: () => setShowLogoutModal(false) }}
+        title={t('profile.logOutTitle')}
+        message={t('profile.logOutMessage')}
+        primaryAction={{ label: t('profile.logOutConfirm'), onClick: handleLogout }}
+        secondaryAction={{ label: t('common.cancel'), onClick: () => setShowLogoutModal(false) }}
       />
     </div>
   );

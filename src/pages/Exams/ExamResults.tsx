@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowUp } from 'lucide-react';
 import { Header, Tabs, Card } from '../../components/ui';
 import styles from './Exams.module.css';
@@ -13,51 +14,49 @@ interface Exam {
   date: string;
 }
 
-const mockExams: Exam[] = [
-  {
-    id: '1',
-    name: 'Complete Blood Count',
-    doctor: 'Dr. Sarah Johnson',
-    city: 'Miami',
-    type: 'Laboratory',
-    date: 'Jan 05, 2026',
-  },
-  {
-    id: '2',
-    name: 'Chest X-Ray',
-    doctor: 'Dr. Michael Chen',
-    city: 'Miami Beach',
-    type: 'Imaging',
-    date: 'Dec 28, 2025',
-  },
-  {
-    id: '3',
-    name: 'Lipid Panel',
-    doctor: 'Dr. Emily Rodriguez',
-    city: 'Coral Gables',
-    type: 'Laboratory',
-    date: 'Dec 15, 2025',
-  },
-];
-
-const tabs = [
-  { id: 'results', label: 'Results' },
-  { id: 'orders', label: 'Orders' },
-];
-
 export function ExamResults() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('results');
+  const tabs = [
+    { id: 'results', label: t('exams.resultsTab') },
+    { id: 'orders', label: t('exams.ordersTab') },
+  ];
+  const mockExams: Exam[] = [
+    {
+      id: '1',
+      name: t('exams.mock.completeBloodCount'),
+      doctor: 'Dr. Sarah Johnson',
+      city: 'Miami',
+      type: t('exams.laboratory'),
+      date: 'Jan 05, 2026',
+    },
+    {
+      id: '2',
+      name: t('exams.mock.chestXray'),
+      doctor: 'Dr. Michael Chen',
+      city: 'Miami Beach',
+      type: t('exams.imaging'),
+      date: 'Dec 28, 2025',
+    },
+    {
+      id: '3',
+      name: t('exams.mock.lipidPanel'),
+      doctor: 'Dr. Emily Rodriguez',
+      city: 'Coral Gables',
+      type: t('exams.laboratory'),
+      date: 'Dec 15, 2025',
+    },
+  ];
 
   return (
     <div className={styles.container}>
       <Header
-        title="Exam Result"
+        title={t('exams.resultTitle')}
         showBackButton
         variant="primary"
       />
 
-      
       <div className={styles.tabsWrapper}>
         <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} variant="dark" />
       </div>
@@ -66,7 +65,7 @@ export function ExamResults() {
         {activeTab === 'results' ? (
           mockExams.length === 0 ? (
             <div className={styles.empty}>
-              <p>No exam results found</p>
+              <p>{t('exams.noResultsFound')}</p>
             </div>
           ) : (
             mockExams.map((exam) => (
@@ -89,7 +88,7 @@ export function ExamResults() {
           )
         ) : (
           <div className={styles.empty}>
-            <p>No pending orders</p>
+            <p>{t('exams.noPendingOrders')}</p>
           </div>
         )}
       </div>
