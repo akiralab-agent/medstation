@@ -218,6 +218,7 @@ export function ChooseSchedule() {
 
     navigate('/schedule/service-type', {
       state: {
+        ...state,
         slot: selectedSlot,
         locationId: selectedLocationId,
       },

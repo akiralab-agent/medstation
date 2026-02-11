@@ -7,12 +7,15 @@ This template provides a minimal setup to get React working in Vite with HMR and
 Create a `.env` file based on `.env.example`.
 
 - `VITE_MASTER_API_BASE_URL`: Required. Base URL for the master API (used by `GET /master/locations`).
+- `VITE_MEDCARD_API_BASE_URL`: Optional. Base URL override for MedCard routes. Defaults to `VITE_MASTER_API_BASE_URL`.
 - `VITE_TELEHEALTH_LOCATION_ID`: Required. Telehealth location ID (hidden from In-person and used for Telemedicine searches).
 - `VITE_AVAILABILITY_CATEGORY_ID`: Required. Category ID used in `POST /appointments/availability`.
 - `VITE_AVAILABILITY_EVENT_ID`: Required. Event ID used in `POST /appointments/availability`.
 - `VITE_MASTER_API_BEARER_TOKEN`: Optional bearer token.
+- `VITE_MEDCARD_BEARER_TOKEN`: Optional MedCard bearer token. Defaults to `VITE_MASTER_API_BEARER_TOKEN`.
 - `VITE_MASTER_API_KEY`: Optional API key.
 - `VITE_MASTER_API_KEY_HEADER`: Optional API key header name (default: `x-api-key`).
+- `VITE_PAYMENT_PROCEDURE_CODE`: Optional procedure code used to resolve the payment amount from `GET /master/procedures` (default: `99214`).
 - `VITE_AVAILABILITY_DURATION_MINUTES`: Optional availability duration (default: `15`).
 - `VITE_AVAILABILITY_TIME_RANGE_START`: Optional start time in `HHmm` (default: `0800`).
 - `VITE_AVAILABILITY_TIME_RANGE_END`: Optional end time in `HHmm` (default: `1700`).

@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Header, Input, Button, Modal } from '../../components/ui';
 import { CreditCard, Check } from 'lucide-react';
+import { medcardApi } from '../../services/medcard';
 import styles from './MedCard.module.css';
 
 interface CardData {
@@ -16,38 +17,132 @@ interface CardData {
   subscription: string;
 }
 
+type NavigationState = Record<string, unknown>;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const pickString = (record: Record<string, unknown>, keys: string[]) => {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value;
+    }
+  }
+
+  return undefined;
+};
+
+const buildAddress = (source: Record<string, unknown>) => {
+  const directAddress = pickString(source, ['address', 'fullAddress']);
+  if (directAddress) {
+    return directAddress;
+  }
+
+  const parts = [
+    pickString(source, ['addressLine1', 'street']),
+    pickString(source, ['city']),
+    pickString(source, ['state']),
+    pickString(source, ['zip', 'postalCode']),
+    pickString(source, ['country']),
+  ].filter((part): part is string => typeof part === 'string' && part.trim().length > 0);
+
+  if (parts.length === 0) {
+    return undefined;
+  }
+
+  return parts.join(', ');
+};
+
+const normalizeStatus = (value: string | undefined, fallback: string) =>
+  value?.trim() ? value.toUpperCase() : fallback;
+
+const mapCardPayload = (payload: unknown, fallbackCardNumber: string, activeLabel: string): CardData => {
+  const root = isRecord(payload) ? payload : {};
+  const data = isRecord(root.data) ? root.data : root;
+
+  const card = isRecord(data.card) ? data.card : {};
+  const person = isRecord(data.person) ? data.person : {};
+  const user = isRecord(data.user) ? data.user : {};
+  const subscription = isRecord(data.subscription) ? data.subscription : {};
+  const status = isRecord(data.status) ? data.status : {};
+
+  const firstName = pickString(person, ['firstName']);
+  const lastName = pickString(person, ['lastName']);
+  const fallbackName = [firstName, lastName].filter(Boolean).join(' ').trim();
+
+  return {
+    cardNumber: pickString(card, ['number', 'cardNumber']) || fallbackCardNumber,
+    cardholder:
+      pickString(person, ['fullName', 'name', 'personName']) ||
+      pickString(user, ['fullName', 'name']) ||
+      fallbackName ||
+      '-',
+    email: pickString(person, ['email']) || pickString(user, ['email']) || '-',
+    phone:
+      pickString(person, ['phone', 'cellPhone', 'mobile']) ||
+      pickString(user, ['phone', 'cellPhone', 'mobile']) ||
+      '-',
+    address: buildAddress(person) || buildAddress(user) || '-',
+    cardStatus: normalizeStatus(
+      pickString(status, ['card', 'cardStatus', 'card_status']) ||
+        pickString(card, ['status', 'cardStatus']),
+      activeLabel
+    ),
+    personStatus: normalizeStatus(
+      pickString(status, ['person', 'personStatus', 'person_status']) ||
+        pickString(person, ['status', 'personStatus']),
+      activeLabel
+    ),
+    subscription:
+      pickString(subscription, ['name', 'title', 'subscriptionName', 'productName']) || '-',
+  };
+};
+
 export function MedCard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
   const [cardNumber, setCardNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [cardData, setCardData] = useState<CardData | null>(null);
   const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [showExternalModal, setShowExternalModal] = useState(false);
 
-  const handleFetch = () => {
+  const handleFetch = async () => {
+    const normalizedCardNumber = cardNumber.replace(/\D/g, '');
+    if (normalizedCardNumber.length !== 16) {
+      setErrorMessage(t('medcard.cardNotFoundMessage'));
+      setShowError(true);
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
+    setShowError(false);
+
+    try {
+      const response = await medcardApi.getCardDetails(normalizedCardNumber);
+      const activeLabel = t('common.active').toUpperCase();
+      setCardData(mapCardPayload(response, normalizedCardNumber, activeLabel));
+    } catch (error) {
+      setCardData(null);
+      setErrorMessage(error instanceof Error ? error.message : t('medcard.cardNotFoundMessage'));
+      setShowError(true);
+    } finally {
       setLoading(false);
-      if (cardNumber.length >= 10) {
-        setCardData({
-          cardNumber,
-          cardholder: 'Carlos Comet',
-          email: 'carlos@gmail.com',
-          phone: '11111111111',
-          address: '1343 Saint Tropez Circle, Broward...',
-          cardStatus: t('common.active').toUpperCase(),
-          personStatus: t('common.active').toUpperCase(),
-          subscription: 'stripe_error',
-        });
-      } else {
-        setShowError(true);
-      }
-    }, 1500);
+    }
   };
 
   const handleContinue = () => {
-    navigate('/schedule/payment', { state: { serviceType: 'medcard' } });
+    const currentState: NavigationState = isRecord(location.state) ? location.state : {};
+    navigate('/schedule/payment', {
+      state: {
+        ...currentState,
+        serviceType: 'medcard',
+        medcardPlanName: cardData?.subscription,
+      },
+    });
   };
 
   const handleHireMedCard = () => {
@@ -66,8 +161,12 @@ export function MedCard() {
               <Input
                 placeholder={t('medcard.enterCardNumber')}
                 value={cardNumber}
-                onChange={(event) => setCardNumber(event.target.value)}
+                onChange={(event) =>
+                  setCardNumber(event.target.value.replace(/\D/g, '').slice(0, 16))
+                }
                 leftIcon={<CreditCard size={20} />}
+                inputMode="numeric"
+                maxLength={16}
               />
             </div>
 
@@ -76,7 +175,7 @@ export function MedCard() {
                 variant="success"
                 fullWidth
                 onClick={handleFetch}
-                disabled={!cardNumber || loading}
+                disabled={cardNumber.length !== 16 || loading}
               >
                 {loading ? t('common.loading') : t('medcard.fetchCard')}
               </Button>
@@ -149,7 +248,7 @@ export function MedCard() {
         onClose={() => setShowError(false)}
         type="error"
         title={t('medcard.cardNotFound')}
-        message={t('medcard.cardNotFoundMessage')}
+        message={errorMessage || t('medcard.cardNotFoundMessage')}
         primaryAction={{ label: t('medcard.tryAgain'), onClick: () => setShowError(false) }}
       />
 

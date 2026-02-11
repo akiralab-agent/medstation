@@ -121,6 +121,11 @@
   width: fit-content;
 }
 
+.valueMeta {
+  font-size: var(--font-xs);
+  color: var(--color-neutral-500);
+}
+
 /* Form */
 .form {
   display: flex;

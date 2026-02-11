@@ -11,12 +11,18 @@ interface PaymentOption {
   label: string;
 }
 
+type NavigationState = Record<string, unknown>;
+
+const isNavigationState = (value: unknown): value is NavigationState =>
+  typeof value === 'object' && value !== null;
+
 export function PaymentMethod() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const isTelemedicine = location.state?.type === 'telemedicine';
+  const currentState = isNavigationState(location.state) ? location.state : {};
+  const isTelemedicine = currentState.type === 'telemedicine';
   const inPersonPayments: PaymentOption[] = [
     { id: 'zelle', icon: Landmark, label: 'Zelle' },
     { id: 'cash', icon: DollarSign, label: t('payment.cash') },
@@ -33,7 +39,12 @@ export function PaymentMethod() {
     if (paymentId === 'cash' || paymentId === 'zelle') {
       setShowSuccessModal(true);
     } else {
-      navigate('/schedule/payment-form', { state: { paymentMethod: paymentId } });
+      navigate('/schedule/payment-form', {
+        state: {
+          ...currentState,
+          paymentMethod: paymentId,
+        },
+      });
     }
   };
 
