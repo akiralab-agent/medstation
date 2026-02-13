@@ -188,7 +188,9 @@ export function MedCard() {
         ) : (
           <div className={styles.cardFound}>
             <div className={styles.successHeader}>
-              <Check size={24} />
+              <span className={styles.successIcon}>
+                <Check size={16} />
+              </span>
               <span>{t('medcard.cardFound')}</span>
             </div>
 
@@ -236,7 +238,12 @@ export function MedCard() {
               </div>
             </div>
 
-            <Button variant="success" fullWidth onClick={handleContinue}>
+            <Button
+              variant="outline"
+              fullWidth
+              onClick={handleContinue}
+              className={styles.continueButton}
+            >
               {t('medcard.continueToPayment')}
             </Button>
           </div>

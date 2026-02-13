@@ -34,59 +34,7 @@ interface NotificationDropdownProps {
   triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'booking',
-    titleKey: 'notifications.items.finishBooking.title',
-    descriptionKey: 'notifications.items.finishBooking.description',
-    timeKey: 'notifications.items.finishBooking.time',
-    unread: true,
-    actions: [
-      { labelKey: 'common.cancel', variant: 'text', action: 'cancel' },
-      { labelKey: 'notifications.finishNow', variant: 'primary', action: 'finish' },
-    ],
-  },
-  {
-    id: '2',
-    type: 'appointment',
-    titleKey: 'notifications.items.appointmentConfirmed.title',
-    descriptionKey: 'notifications.items.appointmentConfirmed.description',
-    timeKey: 'notifications.items.appointmentConfirmed.time',
-    unread: true,
-    actions: [{ labelKey: 'common.view', variant: 'primary', action: 'view' }],
-  },
-  {
-    id: '3',
-    type: 'exam',
-    titleKey: 'notifications.items.newExamResult.title',
-    descriptionKey: 'notifications.items.newExamResult.description',
-    timeKey: 'notifications.items.newExamResult.time',
-    unread: true,
-    actions: [{ labelKey: 'common.view', variant: 'primary', action: 'view' }],
-  },
-  {
-    id: '4',
-    type: 'canceled',
-    titleKey: 'notifications.items.appointmentCanceled.title',
-    descriptionKey: 'notifications.items.appointmentCanceled.description',
-    timeKey: 'notifications.items.appointmentCanceled.time',
-    unread: false,
-    actions: [{ labelKey: 'appointments.reschedule', variant: 'primary', action: 'new' }],
-  },
-  {
-    id: '5',
-    type: 'warning',
-    titleKey: 'notifications.items.paymentRequired.title',
-    descriptionKey: 'notifications.items.paymentRequired.description',
-    timeKey: 'notifications.items.paymentRequired.time',
-    unread: false,
-    actions: [
-      { labelKey: 'common.cancel', variant: 'text', action: 'cancel' },
-      { labelKey: 'payment.payNow', variant: 'primary', action: 'finish' },
-    ],
-  },
-];
+const mockNotifications: Notification[] = [];
 
 const iconMap = {
   booking: Calendar,

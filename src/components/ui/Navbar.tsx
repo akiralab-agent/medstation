@@ -15,6 +15,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { NotificationDropdown } from './NotificationDropdown';
 import { LanguageSelector } from './LanguageSelector';
+import { isHealthPageEnabled, isUserMenuSettingsEnabled } from '../../services/featureFlags';
 import styles from './Navbar.module.css';
 
 interface NavItem {
@@ -33,14 +34,18 @@ export function Navbar() {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const notificationBtnRef = useRef<HTMLButtonElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const showHealthPage = isHealthPageEnabled();
+  const showUserMenuSettings = isUserMenuSettingsEnabled();
   const navItems: NavItem[] = [
     { id: 'dashboard', icon: LayoutDashboard, label: t('nav.dashboard'), path: '/dashboard' },
     { id: 'appointments', icon: CalendarClock, label: t('nav.appointments'), path: '/appointments' },
-    { id: 'health', icon: Heart, label: t('nav.health'), path: '/health' },
     { id: 'exams', icon: Shield, label: t('nav.exams'), path: '/exams' },
   ];
+  if (showHealthPage) {
+    navItems.splice(2, 0, { id: 'health', icon: Heart, label: t('nav.health'), path: '/health' });
+  }
 
-  const notificationCount = 3; // Mock data
+  const notificationCount = 0;
 
   const isActive = (path: string) => {
     if (path === '/dashboard') {
@@ -144,10 +149,12 @@ export function Navbar() {
                 <User size={18} />
                 {t('profile.title')}
               </Link>
-              <Link to="/profile/settings" className={styles.dropdownItem} onClick={() => setUserMenuOpen(false)}>
-                <Settings size={18} />
-                {t('common.settings')}
-              </Link>
+              {showUserMenuSettings && (
+                <Link to="/profile/settings" className={styles.dropdownItem} onClick={() => setUserMenuOpen(false)}>
+                  <Settings size={18} />
+                  {t('common.settings')}
+                </Link>
+              )}
               <div className={styles.dropdownDivider} />
               <button className={styles.dropdownItem} onClick={handleLogout}>
                 <LogOut size={18} />

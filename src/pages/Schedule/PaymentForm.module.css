@@ -146,6 +146,55 @@
   gap: var(--spacing-md);
 }
 
+.instamedContainer {
+  border: 1px dashed var(--color-neutral-300);
+  border-radius: var(--radius-md);
+  background: var(--color-neutral-50);
+  padding: var(--spacing-md);
+}
+
+.instamedHeader {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--color-neutral-800);
+  margin-bottom: var(--spacing-xs);
+}
+
+.instamedDescription {
+  font-size: var(--font-sm);
+  color: var(--color-neutral-600);
+  line-height: 1.5;
+  margin: 0 0 var(--spacing-sm);
+}
+
+.instamedActions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.instamedStatus {
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-xs);
+  color: var(--color-neutral-600);
+}
+
+.statusOk {
+  color: var(--color-success);
+}
+
+.statusErr {
+  color: var(--color-primary-700);
+}
+
+.hiddenField {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .disclaimer {
   font-size: var(--font-xs);
   color: var(--color-neutral-500);

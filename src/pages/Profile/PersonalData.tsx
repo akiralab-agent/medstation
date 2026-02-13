@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Header, Input, Button } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
+import { isProfilePersonalDataReadOnlyEnabled } from '../../services/featureFlags';
 import styles from './Profile.module.css';
 
 export function PersonalData() {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const isReadOnly = isProfilePersonalDataReadOnlyEnabled();
   const [name, setName] = useState(user?.name || '');
   const [dateOfBirth, setDateOfBirth] = useState(user?.dateOfBirth || '');
   const [phone, setPhone] = useState(user?.cellPhone || user?.phone || '');
@@ -45,6 +47,7 @@ export function PersonalData() {
             label={t('common.fullName')}
             value={name}
             onChange={(event) => setName(event.target.value)}
+            readOnly={isReadOnly}
           />
         </div>
 
@@ -54,6 +57,7 @@ export function PersonalData() {
             value={dateOfBirth}
             onChange={(event) => setDateOfBirth(event.target.value)}
             placeholder={t('profile.dateOfBirthPlaceholder')}
+            readOnly={isReadOnly}
           />
         </div>
 
@@ -65,6 +69,7 @@ export function PersonalData() {
               value={phone}
               onChange={(event) => setPhone(formatPhone(event.target.value))}
               placeholder={t('profile.phonePlaceholder')}
+              readOnly={isReadOnly}
             />
           </div>
         </div>
@@ -75,6 +80,7 @@ export function PersonalData() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder={t('auth.placeholders.email')}
+            readOnly={isReadOnly}
           />
         </div>
 
@@ -84,6 +90,7 @@ export function PersonalData() {
             value={addressLine1}
             onChange={(event) => setAddressLine1(event.target.value)}
             placeholder={t('profile.streetAddress')}
+            readOnly={isReadOnly}
           />
         </div>
 
@@ -92,6 +99,7 @@ export function PersonalData() {
             label={t('common.city')}
             value={city}
             onChange={(event) => setCity(event.target.value)}
+            readOnly={isReadOnly}
           />
         </div>
 
@@ -102,6 +110,7 @@ export function PersonalData() {
                 label={t('common.state')}
                 value={state}
                 onChange={(event) => setState(event.target.value)}
+                readOnly={isReadOnly}
               />
             </div>
             <div style={{ flex: 1 }}>
@@ -109,19 +118,22 @@ export function PersonalData() {
                 label={t('common.zip')}
                 value={zip}
                 onChange={(event) => setZip(event.target.value)}
+                readOnly={isReadOnly}
               />
             </div>
           </div>
         </div>
 
-        <Button
-          variant="primary"
-          fullWidth
-          onClick={handleSave}
-          disabled={loading}
-        >
-          {loading ? t('common.saving') : t('common.saveChanges')}
-        </Button>
+        {!isReadOnly && (
+          <Button
+            variant="primary"
+            fullWidth
+            onClick={handleSave}
+            disabled={loading}
+          >
+            {loading ? t('common.saving') : t('common.saveChanges')}
+          </Button>
+        )}
       </div>
     </div>
   );

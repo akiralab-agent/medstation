@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { User, Building2, CreditCard } from 'lucide-react';
 import { Header } from '../../components/ui';
+import { isHealthInsuranceEnabled } from '../../services/featureFlags';
 import styles from './Schedule.module.css';
 
 type NavigationState = Record<string, unknown>;
@@ -16,9 +17,16 @@ export function ServiceType() {
   const currentState = isNavigationState(location.state) ? location.state : {};
   const serviceTypes = [
     { id: 'particular', icon: User, label: t('schedule.serviceTypeParticular') },
-    { id: 'insurance', icon: Building2, label: t('schedule.serviceTypeInsurance') },
     { id: 'medcard', icon: CreditCard, label: 'MEDCARD' },
   ];
+  const showHealthInsurance = isHealthInsuranceEnabled();
+  if (showHealthInsurance) {
+    serviceTypes.splice(1, 0, {
+      id: 'insurance',
+      icon: Building2,
+      label: t('schedule.serviceTypeInsurance'),
+    });
+  }
 
   const handleSelect = (type: string) => {
     if (type === 'medcard') {

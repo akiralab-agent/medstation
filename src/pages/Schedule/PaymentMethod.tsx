@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { DollarSign, CreditCard, Landmark } from 'lucide-react';
 import { Header, Modal } from '../../components/ui';
 import { useState } from 'react';
+import { isCareCreditEnabled } from '../../services/featureFlags';
 import styles from './Schedule.module.css';
 
 interface PaymentOption {
@@ -23,16 +24,22 @@ export function PaymentMethod() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const currentState = isNavigationState(location.state) ? location.state : {};
   const isTelemedicine = currentState.type === 'telemedicine';
+  const showCareCredit = isCareCreditEnabled();
   const inPersonPayments: PaymentOption[] = [
     { id: 'zelle', icon: Landmark, label: 'Zelle' },
     { id: 'cash', icon: DollarSign, label: t('payment.cash') },
     { id: 'card', icon: CreditCard, label: t('payment.card') },
-    { id: 'carecredit', icon: CreditCard, label: t('payment.careCredit') },
   ];
+  if (showCareCredit) {
+    inPersonPayments.push({ id: 'carecredit', icon: CreditCard, label: t('payment.careCredit') });
+  }
+
   const telemedicinePayments: PaymentOption[] = [
     { id: 'card', icon: CreditCard, label: t('payment.card') },
-    { id: 'carecredit', icon: CreditCard, label: t('payment.careCredit') },
   ];
+  if (showCareCredit) {
+    telemedicinePayments.push({ id: 'carecredit', icon: CreditCard, label: t('payment.careCredit') });
+  }
   const payments = isTelemedicine ? telemedicinePayments : inPersonPayments;
 
   const handleSelect = (paymentId: string) => {

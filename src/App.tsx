@@ -3,6 +3,16 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Layout } from './components/Layout';
+import {
+  isHealthPageEnabled,
+  isProfileChangePasswordEnabled,
+  isProfileConfirmIdentityEnabled,
+  isProfileDashboardSettingsEnabled,
+  isProfileDeleteAccountEnabled,
+  isProfileMyProgramsEnabled,
+  isProfileNotificationsEnabled,
+  isProfileTermsOfUseEnabled,
+} from './services/featureFlags';
 
 // Auth Pages
 import { Login, SignUp, ForgotPassword, RegistrationKey } from './pages/Auth';
@@ -59,6 +69,15 @@ function ScrollToTop() {
 }
 
 function AppRoutes() {
+  const showHealthPage = isHealthPageEnabled();
+  const showProfileMyPrograms = isProfileMyProgramsEnabled();
+  const showProfileDashboardSettings = isProfileDashboardSettingsEnabled();
+  const showProfileConfirmIdentity = isProfileConfirmIdentityEnabled();
+  const showProfileChangePassword = isProfileChangePasswordEnabled();
+  const showProfileTermsOfUse = isProfileTermsOfUseEnabled();
+  const showProfileDeleteAccount = isProfileDeleteAccountEnabled();
+  const showProfileNotifications = isProfileNotificationsEnabled();
+
   return (
     <Routes>
       {/* Public Routes */}
@@ -128,7 +147,7 @@ function AppRoutes() {
         <Route path="/exams/:id" element={<ExamDetail />} />
 
         {/* Health */}
-        <Route path="/health" element={<Health />} />
+        {showHealthPage && <Route path="/health" element={<Health />} />}
 
         {/* Media */}
         <Route path="/media" element={<Media />} />
@@ -137,13 +156,13 @@ function AppRoutes() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/info" element={<MyInfo />} />
         <Route path="/profile/personal" element={<PersonalData />} />
-        <Route path="/profile/programs" element={<Profile />} />
-        <Route path="/profile/dashboard-settings" element={<Profile />} />
-        <Route path="/profile/identity" element={<Profile />} />
-        <Route path="/profile/notifications" element={<Profile />} />
-        <Route path="/profile/change-password" element={<Profile />} />
-        <Route path="/profile/terms" element={<Profile />} />
-        <Route path="/profile/delete-account" element={<Profile />} />
+        {showProfileMyPrograms && <Route path="/profile/programs" element={<Profile />} />}
+        {showProfileDashboardSettings && <Route path="/profile/dashboard-settings" element={<Profile />} />}
+        {showProfileConfirmIdentity && <Route path="/profile/identity" element={<Profile />} />}
+        {showProfileNotifications && <Route path="/profile/notifications" element={<Profile />} />}
+        {showProfileChangePassword && <Route path="/profile/change-password" element={<Profile />} />}
+        {showProfileTermsOfUse && <Route path="/profile/terms" element={<Profile />} />}
+        {showProfileDeleteAccount && <Route path="/profile/delete-account" element={<Profile />} />}
       </Route>
 
       {/* Catch all */}

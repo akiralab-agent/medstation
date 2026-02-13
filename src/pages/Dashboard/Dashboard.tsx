@@ -5,8 +5,6 @@ import {
   FileText,
   Calendar,
   CalendarPlus,
-  TrendingUp,
-  Activity,
   Clock,
   ChevronRight,
   User,
@@ -65,11 +63,6 @@ export function Dashboard() {
       path: '/schedule/new',
       color: 'primary',
     },
-  ];
-  const recentActivity = [
-    { id: '1', text: t('dashboard.activityBloodTest'), time: t('dashboard.activityTime2Hours'), icon: FileText },
-    { id: '2', text: t('dashboard.activityAppointment'), time: t('dashboard.activityTime5Hours'), icon: Calendar },
-    { id: '3', text: t('dashboard.activityPrescription'), time: t('dashboard.activityTime1Day'), icon: Activity },
   ];
 
   const formatTime = (dateString?: string) => {
@@ -197,62 +190,6 @@ export function Dashboard() {
                   );
                 })
               )}
-            </div>
-          </section>
-        </div>
-
-        <div className={styles.secondaryGrid}>
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>{t('dashboard.healthOverview')}</h2>
-            <div className={styles.healthCard}>
-              <div className={styles.healthScore}>
-                <div className={styles.scoreCircle}>
-                  <span className={styles.scoreValue}>94</span>
-                  <span className={styles.scoreLabel}>{t('dashboard.score')}</span>
-                </div>
-                <div className={styles.scoreInfo}>
-                  <p className={styles.scoreTitle}>{t('dashboard.excellent')}</p>
-                  <p className={styles.scoreDesc}>{t('dashboard.healthGreatShape')}</p>
-                  <div className={styles.scoreTrend}>
-                    <TrendingUp size={16} />
-                    <span>{t('dashboard.trendFromLastMonth')}</span>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.healthMetrics}>
-                <div className={styles.metric}>
-                  <span className={styles.metricValue}>72 kg</span>
-                  <span className={styles.metricLabel}>{t('health.weight')}</span>
-                </div>
-                <div className={styles.metric}>
-                  <span className={styles.metricValue}>120/80</span>
-                  <span className={styles.metricLabel}>{t('health.bloodPressure')}</span>
-                </div>
-                <div className={styles.metric}>
-                  <span className={styles.metricValue}>72 bpm</span>
-                  <span className={styles.metricLabel}>{t('health.heartRate')}</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>{t('dashboard.recentActivity')}</h2>
-            <div className={styles.activityList}>
-              {recentActivity.map((activity) => {
-                const Icon = activity.icon;
-                return (
-                  <div key={activity.id} className={styles.activityItem}>
-                    <div className={styles.activityIcon}>
-                      <Icon size={18} />
-                    </div>
-                    <div className={styles.activityInfo}>
-                      <p className={styles.activityText}>{activity.text}</p>
-                      <span className={styles.activityTime}>{activity.time}</span>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           </section>
         </div>

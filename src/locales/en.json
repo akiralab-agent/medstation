@@ -1,4 +1,4 @@
-{
+﻿{
   "common.loading": "Loading...",
   "common.user": "User",
   "common.settings": "Settings",
@@ -46,7 +46,7 @@
   "footer.socialTwitter": "Twitter",
   "footer.socialInstagram": "Instagram",
   "footer.socialLinkedin": "LinkedIn",
-  "footer.copyright": "© {{year}} MedStation. All rights reserved.",
+  "footer.copyright": "Â© {{year}} MedStation. All rights reserved.",
 
   "auth.brandDescription": "Access your medical records, schedule appointments, and manage your healthcare journey all in one secure platform.",
   "auth.featureSecure": "Secure & Private",
@@ -55,7 +55,7 @@
   "auth.backToLogin": "Back to login",
   "auth.showPassword": "Show password",
   "auth.hidePassword": "Hide password",
-  "auth.copyright": "© {{year}} MedStation. All rights reserved.",
+  "auth.copyright": "Â© {{year}} MedStation. All rights reserved.",
   "auth.errors.invalidCredentials": "Invalid credentials. Please try again.",
   "auth.errors.generic": "An error occurred. Please try again.",
   "auth.errors.passwordsDoNotMatch": "Passwords do not match.",
@@ -227,7 +227,9 @@
   "payment.processing": "Processing...",
   "payment.goToPayment": "GO TO PAYMENT",
   "payment.successTitle": "PAYMENT SUCCESSFUL",
-  "payment.successMessage": "Your payment has been processed successfully. Your appointment is confirmed!",
+  "payment.successMessage": "Payment created successfully. Please wait for confirmation by email.",
+  "payment.successMessageWithTransaction": "Payment created successfully. Transaction ID: {{transactionId}} (status: {{status}}). Please wait for confirmation by email.",
+  "payment.freeSuccessMessage": "Free consultation confirmed successfully. Please wait for confirmation by email.",
   "payment.cardRefusedTitle": "CARD REFUSED",
   "payment.cardRefusedMessage": "Your payment could not be processed. Please try a different payment method.",
   "payment.tryAnotherCard": "TRY ANOTHER CARD",
@@ -328,3 +330,4 @@
   "media.documentsTitle": "Media & Documents",
   "media.documentsDescription": "Your medical documents and images will appear here."
 }
+

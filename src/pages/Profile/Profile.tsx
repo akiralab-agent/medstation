@@ -12,6 +12,13 @@ import {
 import { Header, ListItem, Modal } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
 import { useState } from 'react';
+import {
+  isHealthPageEnabled,
+  isProfileConfirmIdentityEnabled,
+  isProfileDashboardSettingsEnabled,
+  isProfileMyProgramsEnabled,
+  isProfileNotificationsEnabled,
+} from '../../services/featureFlags';
 import styles from './Profile.module.css';
 
 export function Profile() {
@@ -19,14 +26,29 @@ export function Profile() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const showHealthPage = isHealthPageEnabled();
+  const showMyPrograms = isProfileMyProgramsEnabled();
+  const showDashboardSettings = isProfileDashboardSettingsEnabled();
+  const showConfirmIdentity = isProfileConfirmIdentityEnabled();
+  const showProfileNotifications = isProfileNotificationsEnabled();
   const menuItems = [
     { id: 'myinfo', icon: FileText, label: t('profile.myInfo'), path: '/profile/info' },
-    { id: 'programs', icon: BarChart3, label: t('profile.myPrograms'), path: '/profile/programs' },
-    { id: 'health', icon: Heart, label: t('profile.healthAuthorization'), path: '/health' },
-    { id: 'dashboard', icon: Settings, label: t('profile.dashboardSettings'), path: '/profile/dashboard-settings' },
-    { id: 'identity', icon: Camera, label: t('profile.confirmIdentity'), path: '/profile/identity' },
-    { id: 'notifications', icon: Bell, label: t('notifications.title'), path: '/profile/notifications' },
   ];
+  if (showMyPrograms) {
+    menuItems.push({ id: 'programs', icon: BarChart3, label: t('profile.myPrograms'), path: '/profile/programs' });
+  }
+  if (showHealthPage) {
+    menuItems.push({ id: 'health', icon: Heart, label: t('profile.healthAuthorization'), path: '/health' });
+  }
+  if (showDashboardSettings) {
+    menuItems.push({ id: 'dashboard', icon: Settings, label: t('profile.dashboardSettings'), path: '/profile/dashboard-settings' });
+  }
+  if (showConfirmIdentity) {
+    menuItems.push({ id: 'identity', icon: Camera, label: t('profile.confirmIdentity'), path: '/profile/identity' });
+  }
+  if (showProfileNotifications) {
+    menuItems.push({ id: 'notifications', icon: Bell, label: t('notifications.title'), path: '/profile/notifications' });
+  }
 
   const handleLogout = () => {
     logout();
