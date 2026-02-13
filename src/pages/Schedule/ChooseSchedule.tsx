@@ -12,7 +12,7 @@ import {
 import styles from './Schedule.module.css';
 
 interface ChooseScheduleNavigationState {
-  type?: string;
+  type?: 'inperson' | 'telemedicine';
   specialty?: string;
   location?: string;
   locationId?: string;
@@ -152,6 +152,7 @@ export function ChooseSchedule() {
           date: currentDate,
           locationIds: [selectedLocationId],
           resourceIds: resources.map((resource) => resource.id),
+          mode: state.type === 'telemedicine' ? 'telemedicine' : 'inperson',
         });
 
         if (!isMounted) {

@@ -30,9 +30,10 @@ interface AvailabilityRequest {
   date: Date;
   locationIds: string[];
   resourceIds: string[];
+  mode?: 'inperson' | 'telemedicine';
 }
 
-type RequiredAvailabilityEnvKey = 'VITE_AVAILABILITY_CATEGORY_ID' | 'VITE_AVAILABILITY_EVENT_ID';
+type AvailabilityMode = 'inperson' | 'telemedicine';
 
 const DEFAULT_TOP = 1000;
 const DEFAULT_DURATION_MINUTES = 15;
@@ -49,17 +50,51 @@ const toLocalDate = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
-const getRequiredAvailabilityEnv = (key: RequiredAvailabilityEnvKey) => {
+const getRequiredAvailabilityEnv = (key: keyof ImportMetaEnv, fallbackKey?: keyof ImportMetaEnv) => {
   const value = import.meta.env[key]?.trim();
-  if (!value) {
-    throw new Error(`Missing ${key} environment variable`);
+  if (value) {
+    return value;
   }
-  return value;
+
+  if (fallbackKey) {
+    const fallbackValue = import.meta.env[fallbackKey]?.trim();
+    if (fallbackValue) {
+      return fallbackValue;
+    }
+  }
+
+  const fallbackHint = fallbackKey ? ` or ${fallbackKey}` : '';
+  throw new Error(`Missing ${key}${fallbackHint} environment variable`);
 };
 
-const getAvailabilityConfig = () => ({
-  categoryId: getRequiredAvailabilityEnv('VITE_AVAILABILITY_CATEGORY_ID'),
-  eventId: getRequiredAvailabilityEnv('VITE_AVAILABILITY_EVENT_ID'),
+const getAvailabilityModeConfig = (mode: AvailabilityMode) => {
+  if (mode === 'telemedicine') {
+    return {
+      categoryId: getRequiredAvailabilityEnv(
+        'VITE_AVAILABILITY_TELEHEALTH_CATEGORY_ID',
+        'VITE_AVAILABILITY_CATEGORY_ID'
+      ),
+      eventId: getRequiredAvailabilityEnv(
+        'VITE_AVAILABILITY_TELEHEALTH_EVENT_ID',
+        'VITE_AVAILABILITY_EVENT_ID'
+      ),
+    };
+  }
+
+  return {
+    categoryId: getRequiredAvailabilityEnv(
+      'VITE_AVAILABILITY_INPERSON_CATEGORY_ID',
+      'VITE_AVAILABILITY_CATEGORY_ID'
+    ),
+    eventId: getRequiredAvailabilityEnv(
+      'VITE_AVAILABILITY_INPERSON_EVENT_ID',
+      'VITE_AVAILABILITY_EVENT_ID'
+    ),
+  };
+};
+
+const getAvailabilityConfig = (mode: AvailabilityMode) => ({
+  ...getAvailabilityModeConfig(mode),
   durationMinutes: Number(import.meta.env.VITE_AVAILABILITY_DURATION_MINUTES || DEFAULT_DURATION_MINUTES),
   timeRangeStart: import.meta.env.VITE_AVAILABILITY_TIME_RANGE_START?.trim() || DEFAULT_TIME_RANGE_START,
   timeRangeEnd: import.meta.env.VITE_AVAILABILITY_TIME_RANGE_END?.trim() || DEFAULT_TIME_RANGE_END,
@@ -245,7 +280,8 @@ export async function fetchAvailabilityForDate(request: AvailabilityRequest) {
     return [] as AvailabilitySlot[];
   }
 
-  const config = getAvailabilityConfig();
+  const mode: AvailabilityMode = request.mode === 'telemedicine' ? 'telemedicine' : 'inperson';
+  const config = getAvailabilityConfig(mode);
   const date = toLocalDate(request.date);
 
   const payload = {

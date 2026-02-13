@@ -35,3 +35,9 @@ export const isProfilePersonalDataReadOnlyEnabled = () =>
 
 export const isUserMenuSettingsEnabled = () =>
   isEnabled(import.meta.env.VITE_FEATURE_USER_MENU_SETTINGS_ENABLED);
+
+export const isAppointmentFabPaymentEnabled = () =>
+  isEnabled(import.meta.env.VITE_FEATURE_APPOINTMENT_FAB_PAYMENT_ENABLED);
+
+export const isAppointmentFabEnabled = () =>
+  isEnabled(import.meta.env.VITE_FEATURE_APPOINTMENT_FAB_ENABLED);
