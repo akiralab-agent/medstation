@@ -231,7 +231,9 @@ export function ChooseSchedule() {
     const resourceId = resource.id.trim().toLowerCase();
     return (slotsByResource[resourceId] ?? []).length > 0;
   });
-  const displayedResources = isLoadingAvailability ? resources : resourcesWithSlots;
+  const showDoctorCards =
+    !isLoadingResources && !resourcesError && !isLoadingAvailability && !availabilityError;
+  const displayedResources = showDoctorCards ? resourcesWithSlots : [];
 
   return (
     <div className={styles.container}>
@@ -252,6 +254,9 @@ export function ChooseSchedule() {
       <div className={`${styles.doctorList} ${dateAnimation ? styles.animateList : ''}`}>
         {isLoadingResources && (
           <p className={styles.statusMessage}>{t('schedule.loadingProviders')}</p>
+        )}
+        {!isLoadingResources && isLoadingAvailability && (
+          <p className={styles.statusMessage}>{t('schedule.loadingAvailableSlots')}</p>
         )}
         {resourcesError && <p className={styles.statusMessage}>{resourcesError}</p>}
         {!isLoadingResources && !resourcesError && resources.length === 0 && (
