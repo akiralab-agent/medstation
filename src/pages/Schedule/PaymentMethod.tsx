@@ -24,7 +24,9 @@ export function PaymentMethod() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const currentState = isNavigationState(location.state) ? location.state : {};
   const isTelemedicine = currentState.type === 'telemedicine';
+  const isMedcardFlow = currentState.serviceType === 'medcard';
   const showCareCredit = isCareCreditEnabled();
+
   const inPersonPayments: PaymentOption[] = [
     { id: 'zelle', icon: Landmark, label: 'Zelle' },
     { id: 'cash', icon: DollarSign, label: t('payment.cash') },
@@ -40,7 +42,9 @@ export function PaymentMethod() {
   if (showCareCredit) {
     telemedicinePayments.push({ id: 'carecredit', icon: CreditCard, label: t('payment.careCredit') });
   }
-  const payments = isTelemedicine ? telemedicinePayments : inPersonPayments;
+  const payments = isMedcardFlow
+    ? inPersonPayments
+    : (isTelemedicine ? telemedicinePayments : inPersonPayments);
 
   const handleSelect = (paymentId: string) => {
     if (paymentId === 'cash' || paymentId === 'zelle') {
@@ -51,13 +55,14 @@ export function PaymentMethod() {
           ...currentState,
           paymentMethod: paymentId,
         },
+        replace: true,
       });
     }
   };
 
   const handleSuccessClose = () => {
     setShowSuccessModal(false);
-    navigate('/appointments');
+    navigate('/appointments', { replace: true });
   };
 
   return (

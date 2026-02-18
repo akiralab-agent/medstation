@@ -642,14 +642,14 @@ export function PaymentForm() {
         visible={showSuccess}
         onClose={() => {
           setShowSuccess(false);
-          navigate('/appointments');
+          navigate('/appointments', { replace: true });
         }}
         type="success"
         title={t('payment.successTitle')}
         message={successMessage}
         primaryAction={{
           label: t('appointments.viewMyAppointments'),
-          onClick: () => navigate('/appointments'),
+          onClick: () => navigate('/appointments', { replace: true }),
         }}
       />
 

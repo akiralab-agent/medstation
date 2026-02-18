@@ -213,6 +213,7 @@
   "schedule.serviceTypeTitle": "Type of Service",
   "schedule.serviceTypeParticular": "PARTICULAR",
   "schedule.serviceTypeInsurance": "HEALTH INSURANCE",
+  "schedule.healthInsuranceManualPaymentMessage": "Your appointment has been confirmed. Health insurance payment will be handled manually at the clinic.",
 
   "payment.title": "Payment",
   "payment.methodTitle": "Payment Method",

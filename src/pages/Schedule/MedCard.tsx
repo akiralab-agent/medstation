@@ -151,7 +151,7 @@ export function MedCard() {
 
   return (
     <div className={styles.container}>
-      <Header title="MedCard" showBackButton />
+      <Header title="MedCard" showBackButton variant="primary" />
 
       <div className={styles.content}>
         {!cardData ? (
